@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PepeVote - A Democratized Art Curation Platform</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+
+</header>
+{{status}}
+<br>
+<br>
+<form action="/">
+    <input type="submit" value="Return to Home" />
+</form>
+<br>
+<form action="/create_submission">
+    <input type="submit" value="Restart Submission Process" />
+</form>
+
+<br>
+{% if not registration_error and not hash %}
+<b>How to make a submission:</b>
+<br>
+<br>
+1. Create some digital art
+<br>
+<br>
+2. Create a Counterparty asset for your art
+<br>
+<br>
+3. Upload your art and get its SHA256 hash here:
+<br>
+<br>
+  <form action="/upload" method="post" enctype="multipart/form-data" >
+      <span class="btn btn-default btn-file">
+      <input type="file" name="image">
+      </span>
+<br>
+<br>
+    <input type="submit" value="Upload" class="btn btn-primary">
+  </form>
+
+<br>
+<br>
+{% if upload_error %}
+Error: {{upload_error}}
+{% endif %}
+
+{% else %}
+{% if not message and not registration_error %}
+Your hash is: {{hash}}
+
+<br>
+<br>
+4. Send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash. Use Counterwallet.
+<br>
+The amount of Pepecash to send changes from week to week.
+<br>
+Submission fee for the alpha: 1 Pepecash
+<br>
+<br>
+5. Create a registration message:
+<br>
+<br>
+<form action="/create_message" method="POST">
+Registering Address: <input type="text" name="address">
+<br>
+<br>
+Asset name: <input type="text" name="asset">
+<br>
+<br>
+Image hash: <input type="text" name="hash">
+<br>
+<br>
+<input type="submit" value="Generate">
+</form>
+<br>
+{% if message_error %}
+Error: {{message_error}}
+{% endif %}
+
+{% else %}
+{% if not success %}
+{% if message %}
+Registration message: {{ message }}
+<br>
+<br>
+{% endif %}
+{% if registration_error %}
+Submission error: {{registration_error}}
+<br>
+<br>
+{% endif %}
+6. Use Counterwallet to sign the registration message with the address that burned the Pepecash.
+<br>
+<br>
+7. Submit the message and signature here:
+<br>
+<form action="/submit_message" method="POST">
+Message: <input type="text" name="message">
+<br>
+<br>
+Signature: <input type="text" name="signature">
+<br>
+<br>
+<input type="submit" value="Submit">
+</form>
+{% else %}
+<br>
+8. That's it, you're done!
+<br>
+<br>
+{% endif %}
+{% endif %}
+{% endif %}
+</body>
+</html>

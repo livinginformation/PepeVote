@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PepeVote - A Democratized Art Curation Platform</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+
+</header>
+<br>
+The following images have completed the submission process.
+<br>
+<br>
+Note that submissions are currently test data, and are not representative of future submission quality.
+<br>
+<br>
+At some point in the near future (likely many points), this data will be wiped as development proceeds.
+<br>
+<br>
+Fill in the address field with your signing address, and the boxes with whole numbers from 1-100, that sum up to 100 total (in percent)
+<br>
+<br>
+If any of your vote weightings is not a whole number, it will be counted as zero.
+<br>
+<br>
+{{status}}
+<br>
+<br>
+<form action="/vote" method="post">
+Voting address: <input type="text" name="address">
+<br>
+<br>
+{% for (candidate, asset) in candidates %}
+<b>{{asset}}</b>
+<br>
+<br>
+    <img src="{{ candidate }}" alt="Submission">
+    <br>
+    <br>
+<input type="text" name="{{asset}}">
+<hr/>
+<br>
+<br>
+{% endfor %}
+<input type="submit" value="Vote!">
+</form>
+<br>
+<br>
+<form action="/create_vote">
+    <input type="submit" value="Return" />
+</form>
+</body>
+</html>

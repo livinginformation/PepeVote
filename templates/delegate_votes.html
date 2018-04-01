@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PepeVote - A Democratized Art Curation Platform</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+
+</header>
+<br>
+Vote Delegation:
+<br>
+If you are uncomfortable using your main token storage address to sign messages, you can delegate signing to an empty secondary address.
+<br>
+Please note: An address can only be the delegate for a single address. Assets held by the delegate will not be considered in the voting process.
+<br>
+<br>
+<form action="/delegate_votes" method="POST">
+Source address: <input type="text" name="source">
+<br>
+<br>
+Delegate address: <input type="text" name="delegate">
+<br>
+<br>
+<input type="submit" value="Submit">
+</form>
+<br>
+<br>
+Status: {{status}}
+<br>
+<br>
+Once you have generated the message, submit it on this page:
+<br>
+<form action="/delegate_submit">
+    <input type="submit" value="Submit Delegation" />
+</form>
+
+<br>
+<form action="/">
+    <input type="submit" value="Return" />
+</form>
+</body>
+</html>

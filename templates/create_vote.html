@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PepeVote - A Democratized Art Curation Platform</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+
+</header>
+<br>
+<b>How to submit a vote:</b>
+<br>
+<br>
+1. Go to the vote selection page, fill in your address, and put numbers that add up to less than 100 (in percentage terms) into the text boxes below pepes you like
+<br>
+<br>
+<form action="/vote">
+    <input type="submit" value="Vote" />
+</form>
+<br>
+<br>
+2. Sign the message from step 1 with Counterwallet
+<br>
+<br>
+3. Submit the message and signature here:
+<br>
+<br>
+<form action="/submit_vote">
+    <input type="submit" value="Submit Vote" />
+</form>
+
+<br>
+<br>
+4. That's it, you're done!
+<br>
+<br>
+<form action="/">
+    <input type="submit" value="Return" />
+</form>
+</body>
+</html>

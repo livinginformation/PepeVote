@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PepeVote - A Democratized Art Curation Platform</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+
+<body>
+<header class="navbar">
+
+</header>
+<br>
+The following images have completed the submission process.
+<br>
+<br>
+Note that submissions are currently test data, and are not representative of future submission quality.
+<br>
+<br>
+At some point in the near future (likely many points), this data will be wiped as development proceeds.
+<br>
+<br>
+{% for (candidate, asset, card_score, cash_score, issuance) in candidates %}
+<b>Asset name: </b>{{asset}}
+<br>
+<b>Asset issuance: </b>{{issuance}}
+<br>
+<b>Votes (cards): </b>{{card_score}}
+<br>
+<b>Votes (cash): </b>{{cash_score}}
+<br>
+<br>
+    <img src="{{ candidate }}" alt="Submission">
+    <br>
+    <br>
+----------------------------------------------------------------------------------------------------------------------
+<br>
+<br>
+{% endfor %}
+<br>
+<form action="/">
+    <input type="submit" value="Return" />
+</form>
+</body>
+</html>

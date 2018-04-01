@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title class="text-center">PepeVote - A Democratized Art Curation Platform</title>
+  <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='default.css') }}">
+
+</head>
+
+<body>
+  <div class="navbar navbar-dark bg-dark box-shadow">
+    <div class="container d-flex justify-content-between">
+    <h1>PepeVote</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="text-center">
+    <p class="lead">A Democratized Art Curation Platform</p>
+    </div>
+    <div class="row d-flex">
+    <div class="col-md-6">
+      <a class="btn btn-block btn-primary" href="/about">How it works</a>
+    </div>
+<br/>
+    <div class="col-md-6">
+      <a class="btn btn-block btn-primary" href="/create_submission">Create a Submission</a>
+      </div>
+<br/>
+      <div class="col-md-6">
+        <a class="btn btn-block btn-primary" href="/get_submissions">View This Week's Submissions</a>
+      </div>
+<br/>
+      <div class="col-md-6">
+        <a class="btn btn-block btn-primary" href="/create_vote">Vote on this week's submissions</a>
+      </div>
+<br/>
+      <div class="col-md-12">
+        <a class="btn btn-block btn-primary" href="/delegate_votes">Delegate Voting Power</a>
+      </div>
+
+    <div class="col-md-12 text-center">
+    <br/>
+  <p class="lead">Find out how many votes your address has:</p>
+
+  <form action="/get_votes" >
+    <input placeholder="Your address" class="form-control" type="text" name="address"><br>  
+  <input type="submit" class="btn btn-block btn-success" value="Get Votes">
+</form>
+      <br/>
+      </div>
+    </div>
+</div>
+<footer class="text-muted">
+  </footer>
+</html>

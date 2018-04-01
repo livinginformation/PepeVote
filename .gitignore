@@ -1,0 +1,9 @@
+# exclude everything
+uploads/*
+static/submitted/*
+
+# exception to the rule
+!uploads/.gitkeep
+!static/submitted/.gitkeep
+
+pepevote.db

@@ -1,0 +1,19 @@
+body {
+  background:#2c3027;
+  color:#bfcec2;
+}
+.bg-dark, footer{
+  background:#22251e !important;
+  margin-bottom:26px;
+}
+h1{font-size:29px}
+
+
+.btn-primary,.btn-success{ background-color:#22251e;
+border-color:#22251e;
+}
+
+.btn-primary:hover,.btn-success:hover{ background-color:#151712;
+border-color:#151712;}
+
+footer{padding:30px 0 60px 0px; margin-bottom:-20px}
