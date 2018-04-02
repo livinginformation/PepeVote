@@ -4,12 +4,45 @@
   <meta charset="UTF-8">
   <title>PepeVote - A Democratized Art Curation Platform</title>
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+  <link rel="icon" href="/uploads/favicon.png">
 </head>
 
 <body>
-<header class="navbar">
-
-</header>
++  <nav class="navbar navbar-expand-lg navbar-light bg-light">
++    <a class="navbar-brand" href="/">PepeVote</a>
++    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
++        <span class="navbar-toggler-icon"></span>
++    </button>
++
++    <div class="collapse navbar-collapse" id="navbarSupportedContent">
++        <ul class="navbar-nav mr-auto">
++            <li class="nav-item active">
++                <a class="nav-link" href="/about">How It Works</a>
++            </li>
++            <li class="nav-item">
++                <a class="nav-link" href="/create_submission">Create Submission</a>
++            </li>
++            <li class="nav-item">
++                <a class="nav-link" href="/get_submissions">This Week in Pepes</a>
++            </li>
++            <li class="nav-item">
++                <a class="nav-link" href="/create_vote">Vote for Pepes Now</a>
++            </li>
++            <li class="nav-item">
++                <a class="nav-link" href="/delegate_votes">Delegate Voting Power</a>
++            </li>
++
++
++        </ul>
++        <!-- 
++        <form class="form-inline my-2 my-lg-0">
++            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
++            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
++        </form>
++         TODO: Searching for pepe submissions must be a nice feature to add eventually? Basically just search the submission's title text.
++        -->
++    </div>
++</nav>
 <br>
 
 PepeVote is a democratized digital art curation platform. 
@@ -42,5 +75,11 @@ PepeVote is a democratized digital art curation platform.
 <form action="/">
     <input type="submit" value="Return" />
 </form>
+  
+<!-- you can optionally (perhaps preferably) load these scripts locally. Get them here: https://getbootstrap.com/docs/4.0/getting-started/introduction/ -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
 </body>
 </html>
