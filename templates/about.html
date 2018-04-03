@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>PepeVote - A Democratized Art Curation Platform</title>
-   <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='bootstrap.min.css') }}">
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+  <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='default.css') }}">
   <link rel="icon" href="/uploads/favicon.png">
 </head>
 
@@ -44,7 +45,7 @@
     </div>
 </nav>
 <br>
-
+<div class="container">
 PepeVote is a democratized digital art curation platform. 
 <br>
 <br>
@@ -75,7 +76,7 @@ PepeVote is a democratized digital art curation platform.
 <form action="/">
     <input type="submit" value="Return" />
 </form>
-  
+  </div>
 <!-- you can optionally (perhaps preferably) load these scripts locally. Get them here: https://getbootstrap.com/docs/4.0/getting-started/introduction/ -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
