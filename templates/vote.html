@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+{% if not chosen %}
 <br>
 The following images have completed the submission process.
 <br>
@@ -23,23 +24,148 @@ If any of your vote weightings is not a whole number, it will be counted as zero
 Voting address: <input type="text" name="address">
 <br>
 <br>
+<select name="selections" multiple="multiple" class="image-picker show-html">
 {% for (candidate, asset) in candidates %}
-<b>{{asset}}</b>
-<br>
-<br>
-    <img src="{{ candidate }}" alt="Submission">
-    <br>
-    <br>
-<input type="text" name="{{asset}}">
-<hr/>
+  <option data-img-src="{{ candidate }}" value="{{ candidate }}">{{asset}}</option>
 <br>
 <br>
 {% endfor %}
-<input type="submit" value="Vote!">
+</select>
+<input type="submit" value="Allocate Votes">
 </form>
 <br>
 <br>
 <form action="/create_vote">
     <input type="submit" value="Return" />
 </form>
+{% else %}
+Percentage of votes allocated: <span id="total"></span>
+  Voting address: <input type="text" name="address" id="address">
+
+    {% for (asset, hash, candidate) in chosen %}
+      <br>
+      <br>
+      Asset: {{ asset }}
+      <br>
+      <img src="{{ candidate }}" alt="image">
+      <br>
+<div class="row">
+      <div class="col-md-1">
+      <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+      </div>
+<div class="col-md-1">
+<input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0"></div>
+</div>
+    {% endfor %}
+    <br>
+    <br>
+    <button type="submit" id="submit">Vote</button>
+{% endif %}
 {% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+{% if not chosen %}
+
+$(document).ready(function(){
+    jQuery("select.image-picker").imagepicker({
+      hide_select:  false,
+    });
+
+    jQuery("select.image-picker.show-labels").imagepicker({
+      hide_select:  false,
+      show_label:   true,
+    });
+});
+{% else %}
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+        }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+$(document).ready(function(){
+  {% for (asset, hash, candidate) in chosen %} 
+  jQuery("#{{ asset }}slider").slider({});
+  {% endfor %}
+
+  function updateSliders() {
+    total = 0
+  {% for (asset, hash, candidate) in chosen %}
+
+    val = jQuery("#{{ asset }}number").val()
+    if (val > 100) {
+      jQuery("#{{ asset }}number").val(100)
+      val = 100
+    }
+    jQuery("#{{ asset }}slider").slider('setValue', val);
+    total = +total + +val
+  {% endfor %}
+  jQuery("#total").text(total);
+  }
+  
+  function updateValues() {
+    total = 0
+    thing = this
+    {% for (asset, hash, candidate) in chosen %}
+        val = jQuery("#{{ asset }}slider").slider("option", "value").val();
+        jQuery("#{{ asset }}number").val(val);
+        total = +total + +val
+    {% endfor %}
+    jQuery("#total").text(total);
+  }
+
+  {% for (asset, hash, candidate) in chosen %}
+    $(document).on("slide", "#{{ asset }}slider", updateValues);
+    $(document).on("change, keyup", "#{{ asset }}number", updateSliders);
+  {% endfor %}
+
+  function generateMessage() {
+    block = {{ block_num }}
+    address = $("#address").val()
+    vote_string =  '{"block":"' + block + '",'
+    vote_string += '"address":"' + address + '",'
+    vote_string += '"votes":['
+    {% for (asset, hash, candidate) in chosen %}
+      vote_string += '{"asset":"{{ asset }}",'
+      vote_string += '"hash":"{{ hash }}",'
+
+      val = jQuery("#{{ asset }}slider").slider("option", "value").val();
+
+      vote_string += '"weight":"' + val + '"},'
+    {% endfor %}
+    vote_string = vote_string.substring(0, vote_string.length - 1)
+    vote_string += ']}'
+    return vote_string
+  }
+
+  $('#submit').click(function(){
+    message = generateMessage();
+    post('/submit_vote', {vote_string: message});
+  });
+
+
+
+});
+
+{% endif %}
+</script>
+{% endblock %}
+

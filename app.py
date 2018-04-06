@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
  
 import json
@@ -19,7 +18,7 @@ conn = sqlite3.connect('pepevote.db')
 
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS verified_messages
-             (address text, asset text, hash text PRIMARY KEY, block text, signature text)''')
+             (address text, asset text, hash text PRIMARY KEY, block text, signature text, image text)''')
 c.execute('''CREATE TABLE IF NOT EXISTS votes
              (address text PRIMARY KEY, block text, votes text, signature text)''')
 c.execute('''CREATE TABLE IF NOT EXISTS delegates
@@ -330,7 +329,7 @@ def get_submissions():
         c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
         data = c.fetchone() # Hash is a unique constraint, will never be multiple
         if data is not None:
-            (_, asset, _, _, _) = data
+            (_, asset, _, _, _, _) = data
             scores[asset] = {}
             scores[asset]['cash_score'] = 0
             scores[asset]['card_score'] = 0
@@ -447,7 +446,7 @@ def delegate_submit():
 
         if message == "" or signature == "":
             status = 'Message/Signature is missing'
-            return render_template('submit_vote.html', status=status)
+            return render_template('delegate_submit.html', status=status)
 
         else:
 
@@ -495,52 +494,69 @@ def delegate_submit():
                 return render_template('delegate_submit.html', status=status)
 
 
-
 @app.route('/vote', methods=['GET', 'POST'])
 def vote():
     status = ''
+    percent = 0
     if request.method == 'POST':
-        print(request.form)
-        percent = 0
-
-        payload = {
-           "method": "get_running_info",
-           "params": {
-                     },
-           "jsonrpc": "2.0",
-           "id": 0
-          }
-
-        response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
-        response_s = json.loads(response.text)
-        block = response_s['result']['bitcoin_block_count']
-
         address = request.form['address']
+        if address == '': # This is messy, I need an idiomatic way to do this.
+            print(request.form)
+            percent = 0
 
-        vote_string = '{"block":"' + str(block) + '","address":"' + address + '","votes":['
+            payload = {
+               "method": "get_running_info",
+               "params": {
+                         },
+               "jsonrpc": "2.0",
+               "id": 0
+              }
 
-        for key, value in request.form.items():
-            if value == '':
-                continue
+            response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
+            response_s = json.loads(response.text)
+            block = response_s['result']['bitcoin_block_count']
 
-            if key == 'address':
-                continue
+            address = request.form['address']
 
-            if value.isnumeric():
-                percent += int(value)
-                vote_string += '{"asset":"' + key + '","weight":"' + value + '"},'
+            #vote_string = '{"block":"' + str(block) + '","address":"' + address + '","votes":['
+            chosen = []
 
-        vote_string = vote_string[:-1] # remove the comma from the end
-        vote_string += ']}'
+            chosen = request.form.getlist('selections')
+            selected = []
 
-        print(percent)
-        print(vote_string)
+            for option in chosen:
+                conn = sqlite3.connect('pepevote.db')
+                c = conn.cursor()
+                c.execute('SELECT * FROM verified_messages WHERE image=?', (option,))
+                data = c.fetchone() # Image is unique, there will never be multiple
+
+                if data is not None:
+                    (_, asset, hash, _, _, image) = data
+                    selected.append((asset, hash, image))
+                    print(selected)
+                conn.commit()
+                conn.close()
+            return render_template('vote.html', chosen=selected, block_num=block)
+        else:
+            # User has passed in weightings
+            allocations = request.form
+            print(allocations)
+            pass
+            #if value.isnumeric():
+            #    percent += int(value)
+            #    vote_string += '{"asset":"' + key + '","weight":"' + value + '"},'
+
+       # vote_string = vote_string[:-1] # remove the comma from the end
+       # vote_string += ']}'
+
+       # print(percent)
+       # print(vote_string)
 
         if percent > 100:
             status = 'Sum of vote weights is more than 100%!'
 
         else:
-            status = "Sign the following message with Counterwallet:" + vote_string
+            status = "Sign the following message with Counterwallet:" # + vote_string
 
     dir = os.path.join('static', 'submitted')
     submissions = os.listdir(dir)
@@ -553,7 +569,7 @@ def vote():
         c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
         data = c.fetchone() # Hash is a unique constraint, will never be multiple
         if data is not None:
-            (_, asset, _, _, _) = data
+            (_, asset, _, _, _, _) = data
             candidates.append((os.path.join(dir, submission), asset))
     conn.close()
     print(candidates)
@@ -571,11 +587,15 @@ def submit_vote():
         return render_template('submit_vote.html')
 
     else:
-        message   = ''
-        signature = ''
+        message     = ''
+        signature   = ''
+        vote_string = ''
 
         if 'message'   in request.form: message   = request.form['message']
         if 'signature' in request.form: signature = request.form['signature']
+        if 'vote_string' in request.form:
+            vote_string = request.form['vote_string']
+            return render_template('submit_vote.html', vote_string=vote_string)
 
         if message == "" or signature == "":
             status = 'Message/Signature is missing'
@@ -710,7 +730,7 @@ def submit_message():
 
         if not verified:
             registration_error = 'Verification failed.'
-            return render_template('create_submission', registration_error=registration_error,message=message,hash=hash)
+            return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash)
 
         else:
             conn = sqlite3.connect('pepevote.db')
@@ -780,8 +800,8 @@ def submit_message():
                 conn = sqlite3.connect('pepevote.db')
                 c = conn.cursor()
 
-                tuple = (address, asset, hash, block, signature)
-                c.execute("INSERT INTO verified_messages(address, asset, hash, block, signature) VALUES(?, ?, ?, ?, ?)", tuple)
+                tuple = (address, asset, hash, block, signature, location)
+                c.execute("INSERT INTO verified_messages(address, asset, hash, block, signature, image) VALUES(?, ?, ?, ?, ?, ?)", tuple)
                 conn.commit()
                 conn.close()
 
