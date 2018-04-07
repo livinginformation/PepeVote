@@ -499,8 +499,7 @@ def vote():
     status = ''
     percent = 0
     if request.method == 'POST':
-        address = request.form['address']
-        if address == '': # This is messy, I need an idiomatic way to do this.
+        if 'address' not in request.form:
             print(request.form)
             percent = 0
 
@@ -515,8 +514,6 @@ def vote():
             response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
             response_s = json.loads(response.text)
             block = response_s['result']['bitcoin_block_count']
-
-            address = request.form['address']
 
             #vote_string = '{"block":"' + str(block) + '","address":"' + address + '","votes":['
             chosen = []

@@ -20,19 +20,18 @@ If any of your vote weightings is not a whole number, it will be counted as zero
 {{status}}
 <br>
 <br>
+<div class="row">
 <form action="/vote" method="post">
-Voting address: <input type="text" name="address">
-<br>
-<br>
 <select name="selections" multiple="multiple" class="image-picker show-html">
 {% for (candidate, asset) in candidates %}
+<div class="col-md-4">
   <option data-img-src="{{ candidate }}" value="{{ candidate }}">{{asset}}</option>
-<br>
-<br>
+</div>
 {% endfor %}
 </select>
 <input type="submit" value="Allocate Votes">
 </form>
+</div>
 <br>
 <br>
 <form action="/create_vote">
@@ -40,7 +39,10 @@ Voting address: <input type="text" name="address">
 </form>
 {% else %}
 Percentage of votes allocated: <span id="total"></span>
+<br>
+<br>
   Voting address: <input type="text" name="address" id="address">
+<br>
 
     {% for (asset, hash, candidate) in chosen %}
       <br>
@@ -51,7 +53,7 @@ Percentage of votes allocated: <span id="total"></span>
       <br>
 <div class="row">
       <div class="col-md-1">
-      <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+        <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" />
       </div>
 <div class="col-md-1">
 <input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0"></div>
@@ -69,11 +71,11 @@ Percentage of votes allocated: <span id="total"></span>
 
 $(document).ready(function(){
     jQuery("select.image-picker").imagepicker({
-      hide_select:  false,
+      hide_select:  true,
     });
 
     jQuery("select.image-picker.show-labels").imagepicker({
-      hide_select:  false,
+      hide_select:  true,
       show_label:   true,
     });
 });
