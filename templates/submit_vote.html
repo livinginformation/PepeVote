@@ -1,20 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
-
-Message to sign:
-<br>
-<br>
-{{ vote_string }}
-<br>
-<br>
 <form action="/submit_vote" method="POST">
-Message: <input type="text" name="message">
+Copy the following message, and sign it with Counterwallet:
 <br>
 <br>
-Signature: <input type="text" name="signature">
+<input type="text" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
+<button type="button" class="btn" data-clipboard-target="#message">
+    <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+</button>
 <br>
 <br>
-<input type="submit" value="Submit">
+Paste the signature from Counterwallet here:
+<br>
+<br>
+<input type="text" name="signature">
+<br>
+<br>
+<input type="submit" value="Vote">
 </form>
 <br>
 <br>
@@ -25,4 +27,15 @@ Status: {{status}}
 <form action="/create_vote">
     <input type="submit" value="Return" />
 </form>
+{% endblock %}
+{% block script %}
+    <script>
+    var clipboard = new ClipboardJS('.btn');
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+    </script>
 {% endblock %}

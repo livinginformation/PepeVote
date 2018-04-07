@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-{% if not chosen %}
 <br>
 The following images have completed the submission process.
 <br>
@@ -20,31 +19,12 @@ If any of your vote weightings is not a whole number, it will be counted as zero
 {{status}}
 <br>
 <br>
-<div class="row">
-<form action="/vote" method="post">
-<select name="selections" multiple="multiple" class="image-picker show-html">
-{% for (candidate, asset) in candidates %}
-<div class="col-md-4">
-  <option data-img-src="{{ candidate }}" value="{{ candidate }}">{{asset}}</option>
-</div>
-{% endfor %}
-</select>
-<input type="submit" value="Allocate Votes">
-</form>
-</div>
-<br>
-<br>
-<form action="/create_vote">
-    <input type="submit" value="Return" />
-</form>
-{% else %}
 Percentage of votes allocated: <span id="total"></span>
 <br>
 <br>
-  Voting address: <input type="text" name="address" id="address">
+Voting address: <input type="text" name="address" id="address">
 <br>
-
-    {% for (asset, hash, candidate) in chosen %}
+    {% for (asset, hash, candidate) in candidates %}
       <br>
       <br>
       Asset: {{ asset }}
@@ -53,33 +33,20 @@ Percentage of votes allocated: <span id="total"></span>
       <br>
 <div class="row">
       <div class="col-md-1">
-        <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" />
+        <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
       </div>
 <div class="col-md-1">
-<input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0"></div>
+<input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0" style="margin-left:20px"/>
+</div>
 </div>
     {% endfor %}
     <br>
     <br>
     <button type="submit" id="submit">Vote</button>
-{% endif %}
 {% endblock %}
 
 {% block script %}
 <script type="text/javascript">
-{% if not chosen %}
-
-$(document).ready(function(){
-    jQuery("select.image-picker").imagepicker({
-      hide_select:  true,
-    });
-
-    jQuery("select.image-picker.show-labels").imagepicker({
-      hide_select:  true,
-      show_label:   true,
-    });
-});
-{% else %}
 function post(path, params, method) {
     method = method || "post"; // Set method to post by default if not specified.
 
@@ -104,13 +71,13 @@ function post(path, params, method) {
     form.submit();
 }
 $(document).ready(function(){
-  {% for (asset, hash, candidate) in chosen %} 
+  {% for (asset, hash, candidate) in candidates %} 
   jQuery("#{{ asset }}slider").slider({});
   {% endfor %}
 
   function updateSliders() {
     total = 0
-  {% for (asset, hash, candidate) in chosen %}
+  {% for (asset, hash, candidate) in candidates %}
 
     val = jQuery("#{{ asset }}number").val()
     if (val > 100) {
@@ -126,7 +93,7 @@ $(document).ready(function(){
   function updateValues() {
     total = 0
     thing = this
-    {% for (asset, hash, candidate) in chosen %}
+    {% for (asset, hash, candidate) in candidates %}
         val = jQuery("#{{ asset }}slider").slider("option", "value").val();
         jQuery("#{{ asset }}number").val(val);
         total = +total + +val
@@ -134,8 +101,8 @@ $(document).ready(function(){
     jQuery("#total").text(total);
   }
 
-  {% for (asset, hash, candidate) in chosen %}
-    $(document).on("slide", "#{{ asset }}slider", updateValues);
+  {% for (asset, hash, candidate) in candidates %}
+    $(document).on("slide, change", "#{{ asset }}slider", updateValues);
     $(document).on("change, keyup", "#{{ asset }}number", updateSliders);
   {% endfor %}
 
@@ -145,7 +112,7 @@ $(document).ready(function(){
     vote_string =  '{"block":"' + block + '",'
     vote_string += '"address":"' + address + '",'
     vote_string += '"votes":['
-    {% for (asset, hash, candidate) in chosen %}
+    {% for (asset, hash, candidate) in candidates %}
       vote_string += '{"asset":"{{ asset }}",'
       vote_string += '"hash":"{{ hash }}",'
 
@@ -166,8 +133,6 @@ $(document).ready(function(){
 
 
 });
-
-{% endif %}
 </script>
 {% endblock %}
 

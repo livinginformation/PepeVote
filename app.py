@@ -88,7 +88,7 @@ def get_votes_cards(address):
     votes = 0
     balances = get_balances(address)
     if len(balances) == 0:
-        return
+        return votes
 
     # Tally up votes for indivisibles
     if len(balances) < len(indivisibles):
@@ -115,7 +115,7 @@ def get_votes_cards(address):
             #print(str(balances[asset]) + "/" + str(divisibles[asset]['quantity']) + " held of " + asset)
             card_votes = float(balances[asset])/float(divisibles[asset]['quantity']*100000000)*1000
             votes += math.floor(card_votes)
-
+    print(votes)
     return votes
 
 
@@ -124,12 +124,13 @@ def get_votes_cash(address):
     votes = 0
     balances = get_balances(address)
     if len(balances) == 0:
-        return
+        return votes
     try:
         pepecash = balances['PEPECASH']
     except:
-        return
+        return votes
     votes = math.floor((float(pepecash)/(700000000*100000000))*1000000)
+
     return votes
 
 
@@ -498,79 +499,58 @@ def delegate_submit():
 def vote():
     status = ''
     percent = 0
-    if request.method == 'POST':
-        if 'address' not in request.form:
-            print(request.form)
-            percent = 0
+    if request.method == 'GET':
+        dir = os.path.join('static', 'submitted')
+        submissions = os.listdir(dir)
+        candidates = []
+        conn = sqlite3.connect('pepevote.db')
+        c = conn.cursor()
 
-            payload = {
-               "method": "get_running_info",
-               "params": {
+        for submission in submissions:
+            hash = sha256_checksum(os.path.join(dir,submission))
+            c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
+            data = c.fetchone() # Hash is a unique constraint, will never be multiple
+            if data is not None:
+                (_, asset, _, _, _, image) = data
+                candidates.append((asset, hash, image))
+        conn.close()
+
+        payload = {
+           "method": "get_running_info",
+           "params": {
                          },
-               "jsonrpc": "2.0",
-               "id": 0
-              }
+           "jsonrpc": "2.0",
+           "id": 0
+          }
 
-            response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
-            response_s = json.loads(response.text)
-            block = response_s['result']['bitcoin_block_count']
+        response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
+        response_s = json.loads(response.text)
+        block = response_s['result']['bitcoin_block_count']
+        return render_template('vote.html', candidates=candidates, block_num=block)
 
-            #vote_string = '{"block":"' + str(block) + '","address":"' + address + '","votes":['
-            chosen = []
+    #  (address text, asset text, hash text PRIMARY KEY, block text, signature text, image text)''')
 
-            chosen = request.form.getlist('selections')
-            selected = []
+    else:
+        # This is a post request with the entire string produced by the user
+        # User has passed in weightings
+        allocations = request.form
+        print(allocations)
+        pass
+        #if value.isnumeric():
+        #    percent += int(value)
+        #    vote_string += '{"asset":"' + key + '","weight":"' + value + '"},'
 
-            for option in chosen:
-                conn = sqlite3.connect('pepevote.db')
-                c = conn.cursor()
-                c.execute('SELECT * FROM verified_messages WHERE image=?', (option,))
-                data = c.fetchone() # Image is unique, there will never be multiple
+   # vote_string = vote_string[:-1] # remove the comma from the end
+   # vote_string += ']}'
 
-                if data is not None:
-                    (_, asset, hash, _, _, image) = data
-                    selected.append((asset, hash, image))
-                    print(selected)
-                conn.commit()
-                conn.close()
-            return render_template('vote.html', chosen=selected, block_num=block)
-        else:
-            # User has passed in weightings
-            allocations = request.form
-            print(allocations)
-            pass
-            #if value.isnumeric():
-            #    percent += int(value)
-            #    vote_string += '{"asset":"' + key + '","weight":"' + value + '"},'
-
-       # vote_string = vote_string[:-1] # remove the comma from the end
-       # vote_string += ']}'
-
-       # print(percent)
-       # print(vote_string)
+   # print(percent)
+   # print(vote_string)
 
         if percent > 100:
             status = 'Sum of vote weights is more than 100%!'
 
         else:
             status = "Sign the following message with Counterwallet:" # + vote_string
-
-    dir = os.path.join('static', 'submitted')
-    submissions = os.listdir(dir)
-    candidates = []
-    conn = sqlite3.connect('pepevote.db')
-    c = conn.cursor()
-
-    for submission in submissions:
-        hash = sha256_checksum(os.path.join(dir,submission))
-        c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
-        data = c.fetchone() # Hash is a unique constraint, will never be multiple
-        if data is not None:
-            (_, asset, _, _, _, _) = data
-            candidates.append((os.path.join(dir, submission), asset))
-    conn.close()
-    print(candidates)
-    return render_template('vote.html', candidates=candidates, status=status)
 
 
 @app.route('/create_vote', methods=['GET'])
@@ -584,19 +564,15 @@ def submit_vote():
         return render_template('submit_vote.html')
 
     else:
-        message     = ''
         signature   = ''
         vote_string = ''
 
-        if 'message'   in request.form: message   = request.form['message']
         if 'signature' in request.form: signature = request.form['signature']
-        if 'vote_string' in request.form:
-            vote_string = request.form['vote_string']
-            return render_template('submit_vote.html', vote_string=vote_string)
+        if 'vote_string' in request.form: vote_string = request.form['vote_string']
 
-        if message == "" or signature == "":
-            status = 'Message/Signature is missing'
-            return render_template('submit_vote.html', status=status)
+        if vote_string == "" or signature == "":
+            status = 'Signature is missing.'
+            return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
         else:
             # TODO: Change 'image hash' to 'hash' for terseness
@@ -606,11 +582,11 @@ def submit_vote():
             # If you don't do this, things die with malformed input.
 
             try:
-                message_object = json.loads(message)
+                message_object = json.loads(vote_string)
             except:
                 print("errored.")
                 status='message is not properly formatted JSON'
-                return render_template('submit_vote.html', status=status)
+                return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
             try:
                 address   = message_object['address']
@@ -628,14 +604,19 @@ def submit_vote():
                 if not 'block' in message_object:
                     status = 'Block field is missing.'
 
-                return render_template('submit_vote.html', status=status)
+                return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
-            data = BitcoinMessage(message)
-            verified = VerifyMessage(address, data, signature)
+            data = BitcoinMessage(vote_string)
+            try:
+                verified = VerifyMessage(address, data, signature)
+
+            except:
+                status = 'Verification failed - signature is malformed.'
+                return render_template('submit_vote.html', status=status, vote_string=vote_string)
 
             if not verified:
                 status = 'Verification failed.'
-                return render_template('submit_vote.html', status=status)
+                return render_template('submit_vote.html', status=status, vote_string=vote_string)
 
             else:
                 conn = sqlite3.connect('pepevote.db')
@@ -654,7 +635,7 @@ def submit_vote():
                     if block <= old_block:
                         print("Reusing old message")
                         status = 'Error: reused old vote'
-                        return render_template('submit_vote.html', status=status)
+                        return render_template('submit_vote.html', status=status, vote_string=vote_string)
 
                 conn = sqlite3.connect('pepevote.db')
                 c = conn.cursor()
@@ -667,7 +648,7 @@ def submit_vote():
                 print('Vote submitted successfully')
 
                 status = 'Vote submitted successfully.'
-                return render_template('submit_vote.html', status=status)
+                return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
 
 
