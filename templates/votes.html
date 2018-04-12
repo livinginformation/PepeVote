@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>PepeVote - A Democratized Art Curation Platform</title>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
-</head>
-
-<body>
-<header class="navbar">
-
-</header>
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
 <br>
 
 Card votes: {{votes_cards}} / 1800000
@@ -25,5 +16,5 @@ Cash votes: {{votes_cash}} / 1000000
 <form action="/">
     <input type="submit" value="Return" />
 </form>
-</body>
-</html>
+</div>
+{% endblock %}

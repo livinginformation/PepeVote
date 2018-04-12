@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>PepeVote - A Democratized Art Curation Platform</title>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
-</head>
-
-<body>
-<header class="navbar">
-
-</header>
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
 <br>
 Vote Delegation:
 <br>
@@ -42,5 +33,5 @@ Once you have generated the message, submit it on this page:
 <form action="/">
     <input type="submit" value="Return" />
 </form>
-</body>
-</html>
+</div>
+{% endblock %}
