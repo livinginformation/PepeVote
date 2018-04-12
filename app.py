@@ -1,5 +1,5 @@
 #!/usr/bin/python3
- 
+
 import json
 import math
 import requests
@@ -13,6 +13,9 @@ import sys
 import hashlib
 import sqlite3
 #from flask import Bootstrap
+import optparse
+from twisted.internet import reactor, ssl
+from flask_cors import CORS, cross_origin
 
 conn = sqlite3.connect('pepevote.db')
 
@@ -28,6 +31,7 @@ conn.commit()
 conn.close()
 
 app = Flask(__name__)
+CORS(app)
 #Bootstrap(app)
 
 UPLOAD_FOLDER = os.path.basename('uploads')
@@ -43,6 +47,49 @@ auth = HTTPBasicAuth('rpc', 'rpc')
 
 burn_addy = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R"
 my_addy   = "18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo"
+
+home_dir = os.path.expanduser("~")
+
+sslContext = ssl.DefaultOpenSSLContextFactory(
+    os.path.join(home_dir, '.ssl/privkey.pem'),
+    os.path.join(home_dir, '.ssl/cacert.pem'),
+)
+__port = 701
+
+
+def getPort(value):
+    return (__port, value)[value > 0]
+
+
+def tornado(option, opt_str, value, parser):
+    print('Tornado on port {port}...'.format(port=getPort(value)))
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+
+    http_server = HTTPServer(WSGIContainer(app))
+    http_server.listen(getPort(value))
+    IOLoop.instance().start()
+
+
+def twisted(option, opt_str, value, parser):
+    print('Twisted on port {port}...'.format(port=getPort(value)))
+    from twisted.web.server import Site
+    from twisted.web.wsgi import WSGIResource
+    from twisted.python import log
+    log.startLogging(sys.stdout)
+
+    resource = WSGIResource(reactor, reactor.getThreadPool(), app)
+    site = Site(resource)
+
+    reactor.listenSSL(getPort(5001), site,  sslContext)
+    reactor.listenTCP(getPort(value), site, interface="0.0.0.0")
+    reactor.run()
+
+
+def builtin(option, opt_str, value, parser):
+    print('Built-in development server on port {port}...'.format(port=getPort(value)))
+    app.run(host="0.0.0.0",port=getPort(value),debug=True)
 
 
 def sha256_checksum(filename, block_size=65536):
@@ -271,6 +318,16 @@ setup()
 @app.route('/')
 def hello_world():
     return render_template('index.html')
+
+
+@app.route('/ajaxtest')
+def ajaxtest():
+    return render_template('ajaxtest.html')
+
+
+@app.route('/rpwverify')
+def rpwverify():
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 
 @app.route('/upload', methods=['POST'])
@@ -794,3 +851,13 @@ def submit_message():
 # submitted will have a file mapping file names and asset names + issuance.
 # submission checker will only transfer if the image also has a matching doc in the verified file
 
+def main():
+    parser = optparse.OptionParser(usage="%prog [options]  or type %prog -h (--help)")
+    parser.add_option('--tornado', help='Tornado non-blocking web server', action="callback", callback=tornado,type="int");
+    parser.add_option('--twisted', help='Twisted event-driven web server', action="callback", callback=twisted, type="int");
+    parser.add_option('--builtin', help='Built-in Flask web development server', action="callback", callback=builtin, type="int");
+    (options, args) = parser.parse_args()
+    parser.print_help()
+
+if __name__ == "__main__":
+    main()
