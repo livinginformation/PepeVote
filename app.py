@@ -34,7 +34,7 @@ conn.close()
 app = Flask(__name__)
 CORS(app)
 
-app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # for 4MB max-limit.
+# app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # for 4MB max-limit.
 
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -344,7 +344,10 @@ def upload_file():
         return render_template('create_submission.html', upload_error=upload_error)
 
     file = request.files['image']
-    im   = Image.open(file)
+    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(f)
+
+    im = Image.open(file)
 
     (width, height) = im.size
     filetype        = im.format
@@ -361,8 +364,6 @@ def upload_file():
         upload_error='File must be a jpeg, png, or gif'
         return render_template('create_submission.html', upload_error=upload_error)
 
-    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(f)
     hash = sha256_checksum(f)
     print("File written: " + f)
     return render_template('create_submission.html', hash=hash)
