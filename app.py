@@ -16,6 +16,7 @@ import sqlite3
 import optparse
 from twisted.internet import reactor, ssl
 from flask_cors import CORS, cross_origin
+from PIL import Image
 
 conn = sqlite3.connect('pepevote.db')
 
@@ -32,11 +33,11 @@ conn.close()
 
 app = Flask(__name__)
 CORS(app)
-#Bootstrap(app)
+
+app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # for 4MB max-limit.
 
 UPLOAD_FOLDER = os.path.basename('uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 bitcoin_rpc_url = "http://localhost:8332"
 xcpd_url = "http://localhost:4000/api/"
@@ -327,28 +328,44 @@ def ajaxtest():
 
 @app.route('/rpwverify')
 def rpwverify():
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+    return json.dumps({'success':True, 'status': 'Please display this message.'}), 200, {'ContentType':'application/json'} 
+
+
+@app.route('/vote_list')
+def vote_list():
+    return render_template('vote_list.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     hash = 0
-    if 'image' in request.files:
-        file = request.files['image']
-        if file.filename.endswith(".png") or file.filename.endswith(".jpg") or \
-          file.filename.endswith(".jpeg") or file.filename.endswith(".gif"):
-            f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(f)
-            hash = sha256_checksum(f)
-            print("File written: " + f)
-
-            return render_template('create_submission.html', hash=hash)
-        else:
-            upload_error='File is not an image or a gif'
-            return render_template('create_submission.html', upload_error=upload_error)
-    else:
+    if 'image' not in request.files:
         upload_error='No image uploaded.'
         return render_template('create_submission.html', upload_error=upload_error)
+
+    file = request.files['image']
+    im   = Image.open(file)
+
+    (width, height) = im.size
+    filetype        = im.format
+
+    if (width != 400):
+        upload_error = 'Image needs to be 400 pixels wide'
+        return render_template('create_submission.html', upload_error=upload_error)
+
+    if (height != 560):
+        upload_error = 'Image needs to be 560 pixels tall'
+        return render_template('create_submission.html', upload_error=upload_error)
+
+    if filetype != 'JPEG' and filetype != 'GIF' and filetype != 'PNG':
+        upload_error='File must be a jpeg, png, or gif'
+        return render_template('create_submission.html', upload_error=upload_error)
+
+    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(f)
+    hash = sha256_checksum(f)
+    print("File written: " + f)
+    return render_template('create_submission.html', hash=hash)
 
 
 @app.route('/get_votes', methods=['GET'])
