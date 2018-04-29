@@ -18,10 +18,14 @@ h1{font-size:29px}
   margin: 1% 0;
 }
 
-.btn-primary:hover,
-.btn-success:hover {
+.btn-primary:hover {
   background-color:#151712;
   border-color:#151712;
+}
+
+.btn-success:hover {
+  background-color:#4fc81f;
+  border-color:#4fc81f;
 }
 
 footer { 
