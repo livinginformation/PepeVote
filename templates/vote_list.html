@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+{% for (vote, signature) in votes %}
+{{vote}}
+<br>
+{{signature}}
+<br>
+-------------------------------------
+{% endfor %}
+</div>
+{% endblock %}

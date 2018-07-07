@@ -7,3 +7,4 @@ static/submitted/*
 !static/submitted/.gitkeep
 
 pepevote.db
+.DS_Store
