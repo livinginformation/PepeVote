@@ -1,37 +1,37 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="container">
-<br>
-Vote Delegation:
-<br>
-If you are uncomfortable using your main token storage address to sign messages, you can delegate signing to an empty secondary address.
-<br>
-Please note: An address can only be the delegate for a single address. Assets held by the delegate will not be considered in the voting process.
-<br>
-<br>
-<form action="/delegate_votes" method="POST">
-Source address: <input type="text" name="source">
-<br>
-<br>
-Delegate address: <input type="text" name="delegate">
-<br>
-<br>
-<input type="submit" value="Submit">
-</form>
-<br>
-<br>
-Status: {{status}}
-<br>
-<br>
-Once you have generated the message, submit it on this page:
-<br>
-<form action="/delegate_submit">
-    <input type="submit" value="Submit Delegation" />
-</form>
+    <br>
+    <div class='nice-header'>Vote Delegation</div>
+    Keeping up with all the newest pieces of art can be time consuming. Leave it to the experts and delegate your votes to those who you know have good pepe taste.
+    Lorem ipsum Lorem ipsum Lorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum
+    <br>
+    <br>
+    If you are uncomfortable using your main token storage address to sign messages, you can delegate signing to an empty secondary address.
+    <br>
+    Please note: An address can only be the delegate for a single address. Assets held by the delegate will not be considered in the voting process.
+    <br>
+    <br>
+    <form action="/delegate_votes" method="POST">
+    Source address: <input type="text" name="source">
+    <br>
+    <br>
+    Delegate address: <input type="text" name="delegate">
+    <br>
+    <br>
+    <input class='btn btn-primary' type="submit" value="Submit">
+    </form>
+    <br>
+    <br>
+    Status: {{status}}
+    <br>
+    <br>
+    Once you have generated the message, submit it on this page:
+    <br>
+    <form action="/delegate_submit">
+        <input class='btn btn-primary' type="submit" value="Submit Delegation" />
+    </form>
 
-<br>
-<form action="/">
-    <input type="submit" value="Return" />
-</form>
+    <br>
 </div>
 {% endblock %}

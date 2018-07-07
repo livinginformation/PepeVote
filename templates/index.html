@@ -1,20 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}  
   <div class="container pepe-body">
-    <div class="text-center">
-    </div>
-    <div class="row d-flex">
+
     <div class="container flex-row align-items-center justify-content-center d-flex">
         <div class="card" style="width: 18rem;">
             <img class="card-img-top" href="{{ url_for('static', filename='modern_pepe.png') }}"   src="{{ url_for('static', filename='modern_pepe.png') }}" alt="Card image cap">
         </div>
         <div class="container flex-column align-items-center justify-content-center d-flex">
-          <h5 class="card-title nice-header">What is PepeVote</h5>
-          <p class="card-text fat-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a class="btn btn-primary" href="/about">How it works</a>
+            <h5 class="card-title nice-header">What is PepeVote</h5>
+            <p class="card-text fat-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a class="btn btn-primary" href="/about">How it works</a>
         </div>
     </div>
-<br/>
+    <br/>
+
     <div class="container flex-row align-items-center justify-content-center d-flex">
         <div class="container flex-column align-items-center justify-content-center d-flex">
             <h5 class="card-title nice-header">Calling All digital Artists</h5>
@@ -24,45 +23,48 @@
         <div class="card" style="width: 18rem;">
             <img class="card-img-top" href="{{ url_for('static', filename='modern_pepe.png') }}"   src="{{ url_for('static', filename='modern_pepe.png') }}" alt="Card image cap">
         </div>
-    </div>
-<br/>
+    </div> 
+    <br/>
+
     <div class="container flex-column align-items-center justify-content-center d-flex">
-      <a class="btn btn-primary" href="/get_submissions">View This Week's Submissions</a>
+        <a class="btn btn-primary" href="/get_submissions">View This Week's Submissions</a>
     </div>
-<br/>
+    <br/>
+    
     <div class="container flex-column align-items-center justify-content-center d-flex">
-      <a class="btn btn-primary" href="/vote">Vote on this week's submissions</a>
-    </div>
-<br/>
-    <div class="container flex-column justify-content-center d-flex flex-grow:1">
-      <a class="btn btn-primary" href="/delegate_votes">Delegate Voting Power</a>
-      <div class="progress spaced-bar">
-          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <div class="progress spaced-bar">
-          <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <div class="progress spaced-bar">
-          <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <div class="progress spaced-bar">
-          <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        <div class="progress spaced-bar">
-          <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
+        <a class="btn btn-primary" href="/vote">Vote on this week's submissions</a>
     </div>
 
     <div class="col-md-12 text-center">
-    <br/>
-  <p class="lead">Find out how many votes your address has:</p>
-
-  <form action="/get_votes" >
-    <input placeholder="Your address" class="form-control" type="text" name="address"><br>  
-    <input type="submit" class="btn btn-block btn-success" value="Get Votes">
-  </form>
-      <br/>
-      </div>
+        <br/>
+        <p class="lead">Find out how many votes your address has:</p>
+        <form action="/get_votes" >
+            <input placeholder="Your address" class="form-control" type="text" name="address"><br>  
+            <input type="submit" class="btn btn-block btn-success" value="Get Votes">
+        </form>
+        <br/>
+        </div>
     </div>
+
+    <br/>
+    <div class="container flex-column justify-content-center d-flex flex-grow:1">
+        <a class="btn btn-primary" href="/delegate_votes">Delegate Voting Power</a>
+        <div class="progress spaced-bar">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="progress spaced-bar">
+            <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="progress spaced-bar">
+            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="progress spaced-bar">
+            <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="progress spaced-bar">
+            <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
