@@ -1,0 +1,5 @@
+INSTALL DEPENDENCIES:
+    pip install twisted
+    pip install pyOpenSSL
+    pip install service_identity
+    pip install eventlet
