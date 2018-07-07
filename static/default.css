@@ -1,5 +1,5 @@
 body {
-  font-family: Nunito-Light,Open Sans,Roboto,Tahoma,Verdana,sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 .bg-dark,
@@ -11,15 +11,17 @@ h1{font-size:29px}
 
 .btn-primary,
 .btn-success {
-  border-color:#22251e;
-  background-color: white;
-  color: black;
+  background-color: #22d89e;
+  border: none;
+  color: white;
   margin: 1% 0;
 }
 
 .btn-primary:hover,
 .btn-success:hover {
-  border-color:#151712;
+  border: none;
+  background-color: #218838;
+  color: white;
 }
 
 footer { 
@@ -42,4 +44,8 @@ footer {
 
 .spaced-bar {
   margin-bottom: 1rem;
+}
+
+.alone-text {
+  font-size: 28px;
 }

@@ -4,10 +4,6 @@
 <div class="container">
 <br>
 <br>
-<form action="/create_submission">
-    <input class="btn btn-primary" type="submit" value="Restart Submission Process" />
-</form>
-
 <br>
 {% if not registration_error and not hash %}
 <b>How to make a submission:</b>
@@ -42,14 +38,17 @@ Asset restrictions:
 3. Upload your art and get its SHA256 hash here:
 <br>
 <br>
-  <form action="/upload" method="post" enctype="multipart/form-data" >
-      <span class="btn btn-default btn-file">
-      <input type="file" name="image">
-      </span>
-<br>
-<br>
-    <input type="submit" value="Upload" class="btn btn-primary">
-  </form>
+    <form action="/upload" method="post" enctype="multipart/form-data" >
+        <span class="btn btn-default btn-file">
+        <input type="file" name="image">
+        </span>
+        <br>
+        <br>
+        <input type="submit" value="Upload" class="btn btn-primary">
+    </form>
+    <form action="/create_submission">
+        <input class="btn btn-primary" type="submit" value="Restart Submission Process" />
+    </form>
 
 <br>
 <br>
