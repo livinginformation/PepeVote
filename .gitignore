@@ -1,10 +1,10 @@
 # exclude everything
-python-version/uploads/*
-python-version/static/submitted/*
+uploads/*
+static/submitted/*
 
 # exception to the rule
-!python-version/uploads/.gitkeep
-!python-version/static/submitted/.gitkeep
+!uploads/.gitkeep
+!static/submitted/.gitkeep
 
-python-version/pepevote.db
-python-version/.DS_Store
+pepevote.db
+.DS_Store
