@@ -1,9 +1,10 @@
 body {
-  background:#2c3027;
   color:#bfcec2;
+  font-family: Nunito-Light,Open Sans,Roboto,Tahoma,Verdana,sans-serif;
+  background-color: black !important;
 }
 .bg-dark, footer{
-  background:#22251e !important;
+  background-color:white !important;
   margin-bottom:26px;
 }
 h1{font-size:29px}
