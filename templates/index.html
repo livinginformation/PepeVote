@@ -25,15 +25,25 @@
         </div>
     </div> 
     <br/>
-
-    <div class="container flex-column align-items-center justify-content-center d-flex">
-        <a class="btn btn-primary" href="/get_submissions">View This Week's Submissions</a>
-    </div>
-    <br/>
-    
-    <div class="container flex-column align-items-center justify-content-center d-flex">
-        <img class="create_asset_icon" href="{{ url_for('static', filename='vote.png') }}"   src="{{ url_for('static', filename='vote.png') }}" alt="Card image cap">
-        <a class="btn btn-primary" href="/vote">Vote on this week's submissions</a>
+    <div class='container flex-row d-flex '>
+        <div class="container flex-column align-items-start justify-content-start d-flex green-card">
+            <div class='alone-text'>How it works</div>
+            <p>1. Every week artists submit digital art to the gallery</p>
+            <p >2. The Rare Pepe community votes on which art to accept</p>
+            <p >3. Two pieces of art are chosen each week</p>
+            <p >4. The first piece is chosen by majority vote by owned Pepecash</p>
+            <p >5. The second piece is chosen by majority vote by owned Pepe cards</p>
+            <div >6. Details can be found at the docs  
+            <a href="https://docs.google.com/document/d/1pp_RJuy8QVuWUovUGolujS_PeKsFoNA3RDNfZwhoWuA/edit?usp=sharing"> <b>here</b> </a>
+            </div>
+            <br>
+            <a class="btn btn-primary purple-button" href="/get_submissions">View Submissions</a>
+        </div>
+        <div class="container flex-column align-items-center justify-content-center d-flex">
+            <img class="create_asset_icon" href="{{ url_for('static', filename='vote.png') }}"   src="{{ url_for('static', filename='vote.png') }}" alt="Card image cap">
+            <a class="btn btn-primary" href="/vote">Vote on this week's submissions</a>
+        </div>
+        <br/>
     </div>
     <br/>
 

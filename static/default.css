@@ -73,3 +73,39 @@ footer {
 .center-text {
   text-align: center;
 }
+
+.green-card {
+  color: white;
+  background: rgba(33, 136, 56, .5);
+  border-radius: 5%;
+  padding: 40px;
+}
+
+.purple-button {
+  background: #007bff;
+}
+
+.purple-button:hover {
+  background: rgba(82,49,160,.84);
+}
+
+.problem {
+  background: red;
+  border-radius: 2px;
+  color: white;
+  padding: 3px;
+  font-weight: bold;
+}
+
+.mission {
+  background: #22d89e;
+  border-radius: 2px;
+  color: white;
+  padding: 3px;
+  font-weight: bold;
+}
+
+.ruler {
+  border: .5px solid lightgray;
+  height: 20rem;
+}
