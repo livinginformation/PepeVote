@@ -49,3 +49,13 @@ footer {
 .alone-text {
   font-size: 28px;
 }
+
+.pepe-background {
+  background-image: url("Untitled_design.png");
+  width: 100%;
+  height: 28rem;
+  margin-bottom: 3rem;
+  color: white;
+  font-size: 60px;
+  text-align: center;
+}
