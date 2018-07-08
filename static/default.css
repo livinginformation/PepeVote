@@ -61,3 +61,11 @@ footer {
   font-size: 60px;
   text-align: center;
 }
+
+.create_asset_icon {
+  height: 12rem;
+}
+
+#inp {
+  width: 13rem;
+}
