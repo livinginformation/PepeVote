@@ -69,3 +69,7 @@ footer {
 #inp {
   width: 13rem;
 }
+
+.center-text {
+  text-align: center;
+}
