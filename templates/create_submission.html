@@ -8,31 +8,37 @@
     {% if not registration_error and not hash %}
     <b><div class='nice-header'>Making a submission</div></b>
     <br>
-    <img class='create_asset_icon' href="{{ url_for('static', filename='art_tools.jpg') }}"   src="{{ url_for('static', filename='art_tools.jpg') }}" alt="Card image cap">
+    <div class='container flex-row align-items-center justify-content-center d-flex'>
+        <div class='container flex-column align-items-center justify-content-center d-flex'>
+            <img class='create_asset_icon' href="{{ url_for('static', filename='art_tools.jpg') }}"   src="{{ url_for('static', filename='art_tools.jpg') }}" alt="Card image cap">
+            <br>
+            <div class='alone-text'>1. Create digital art</div>
+            <br>
+            <b>Requirements</b>
+            <ul>
+                <li>Must be 400 pixels wide by 560 pixels tall</li>
+                <li>Cannot have been submitted by someone else on a prior week</li>
+                <li>Gif, png, and jpg files only. Currently considering svg</li>
+                <li>Gifs have a maximum size of 4mb (currently not checked)</li>
+            </ul>
+        </div>
+        <div class='container flex-column align-items-center justify-content-center d-flex'>
+            <img class='create_asset_icon' href="{{ url_for('static', filename='Counterparty.png') }}"   src="{{ url_for('static', filename='Counterparty.png') }}" alt="Card image cap">
+            <br>
+            <div class='alone-text center-text'>2. Create a Counterparty asset for your art</div>
+            <br>
+            <b>Requirements</b>
+            <ul>
+                <li>Must be held by a single address, no pre-sales</li>
+                <li>Cannot be divisible</li>
+                <li>Must have an issuance between 100 and 10000 (subject to change)</li>
+                <li>Issuance must be locked</li>
+            </ul>
+        </div>
+    </div>
     <br>
-    <div class='alone-text'>1. Create digital art</div>
     <br>
-    <b>Requirements</b>
-    <ul>
-        <li>Must be 400 pixels wide by 560 pixels tall</li>
-        <li>Cannot have been submitted by someone else on a prior week</li>
-        <li>Gif, png, and jpg files only. Currently considering svg</li>
-        <li>Gifs have a maximum size of 4mb (currently not checked)</li>
-    </ul>
-    <img class='create_asset_icon' href="{{ url_for('static', filename='Counterparty.png') }}"   src="{{ url_for('static', filename='Counterparty.png') }}" alt="Card image cap">
-    <br>
-    <div class='alone-text'>2. Create a Counterparty asset for your art</div>
-    <br>
-    <br>
-    <b>Requirements</b>
-    <ul>
-        <li>Must be held by a single address, no pre-sales</li>
-        <li>Cannot be divisible</li>
-        <li>Must have an issuance between 100 and 10000 (subject to change)</li>
-        <li>Issuance must be locked</li>
-    </ul>
-    <br>
-    <br>
+    <img class='create_asset_icon' href="{{ url_for('static', filename='upload.png') }}"   src="{{ url_for('static', filename='upload.png') }}" alt="Card image cap">
     <div class='alone-text'>3. Upload your art and get its SHA256 hash here</div>
     <br>
     <br>
