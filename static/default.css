@@ -109,3 +109,23 @@ footer {
   border: .5px solid lightgray;
   height: 20rem;
 }
+
+.telegram {
+  height: 2rem;
+  margin-left: .5rem;
+}
+
+.telegram-wrapper {
+  position: fixed;
+  right: 3rem;
+  bottom: 5rem;
+  padding: .58333rem;
+  background-color: #5332a0 !important;
+  color: white;
+  border-radius: 999rem;
+  z-index: 100;
+}
+
+.telegram-wrapper:hover {
+  color: white;
+}
