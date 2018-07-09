@@ -132,12 +132,9 @@ def get_balances(address):
     return balances
 
 
-def get_votes_cards(address, delegated_list):
+def get_votes_cards(delegated_list):
 
     votes = 0
-
-    # todo sanity check delegated_list
-    delegated_list.append(address)
 
     for _address in delegated_list:
         balances = get_balances(_address)
@@ -170,12 +167,9 @@ def get_votes_cards(address, delegated_list):
     return votes
 
 
-def get_votes_cash(address, delegated_list):
+def get_votes_cash(delegated_list):
     # Approximately one million votes total
     votes = 0
-
-    # todo sanity check delegated list
-    delegated_list.append(address)
 
     for _address in delegated_list:
         balances = get_balances(_address)
@@ -445,6 +439,8 @@ def get_submissions():
         delegate_mapping[delegate].append(delegated)
         delegated_mapping[delegated] = delegate
 
+    print("--------------")
+    print(delegate_mapping)
     for vote in votes:
         (address, _, set, _) = vote
         set = set.replace("'",'"')
@@ -454,8 +450,9 @@ def get_submissions():
                 # This address has been delegated, don't count its votes
                 continue
 
-        cash_votes = get_votes_cash(address, delegate_mapping[address])
-        card_votes = get_votes_cards(address, delegate_mapping[address])
+        delegate_mapping[address].append(address)
+        cash_votes = get_votes_cash(delegate_mapping[address])
+        card_votes = get_votes_cards(delegate_mapping[address])
 
         user_votes = json.loads(set)
         for user_vote in user_votes:
