@@ -17,6 +17,7 @@ import optparse
 from twisted.internet import reactor, ssl
 from flask_cors import CORS, cross_origin
 from PIL import Image
+from collections import defaultdict
 
 conn = sqlite3.connect('pepevote.db')
 
@@ -131,53 +132,62 @@ def get_balances(address):
     return balances
 
 
-def get_votes_cards(address):
+def get_votes_cards(address, delegated_list):
 
     votes = 0
-    balances = get_balances(address)
-    if len(balances) == 0:
-        return votes
 
-    # Tally up votes for indivisibles
-    if len(balances) < len(indivisibles):
-        for asset in indivisibles:
+    # todo sanity check delegated_list
+    delegated_list.append(address)
+
+    for _address in delegated_list:
+        balances = get_balances(_address)
+        if len(balances) == 0:
+            continue
+
+        # Tally up votes for indivisibles
+        if len(balances) < len(indivisibles):
+            for asset in indivisibles:
+                if asset in balances:
+                    # Address has a Pepe asset, give proportional votes
+
+                    card_votes = float(balances[asset])/float(indivisibles[asset]['quantity'])*1000
+                    votes += math.floor(card_votes)
+
+        else:
+            for asset in balances:
+                if asset in indivisibles:
+                    # Address has a Pepe asset, give proportional votes
+
+                    card_votes = float(balances[asset])/float(indivisibles[asset]['quantity'])*1000
+                    votes += math.floor(card_votes)
+
+        # Tally up votes for divisibles
+        for asset in divisibles:
             if asset in balances:
-                # Address has a Pepe asset, give proportional votes
-
-                #print(str(balances[asset]) + "/" + str(indivisibles[asset]['quantity']) + " held of " + asset)
-                card_votes = float(balances[asset])/float(indivisibles[asset]['quantity'])*1000
+                card_votes = float(balances[asset])/float(divisibles[asset]['quantity']*100000000)*1000
                 votes += math.floor(card_votes)
 
-    else:
-        for asset in balances:
-            if asset in indivisibles:
-                # Address has a Pepe asset, give proportional votes
-
-                #print(str(balances[asset]) + "/" + str(indivisibles[asset]['quantity']) + " held of " + asset)
-                card_votes = float(balances[asset])/float(indivisibles[asset]['quantity'])*1000
-                votes += math.floor(card_votes)
-
-    # Tally up votes for divisibles
-    for asset in divisibles:
-        if asset in balances:
-            #print(str(balances[asset]) + "/" + str(divisibles[asset]['quantity']) + " held of " + asset)
-            card_votes = float(balances[asset])/float(divisibles[asset]['quantity']*100000000)*1000
-            votes += math.floor(card_votes)
-    print(votes)
     return votes
 
 
-def get_votes_cash(address):
+def get_votes_cash(address, delegated_list):
     # Approximately one million votes total
     votes = 0
-    balances = get_balances(address)
-    if len(balances) == 0:
-        return votes
-    try:
-        pepecash = balances['PEPECASH']
-    except:
-        return votes
-    votes = math.floor((float(pepecash)/(700000000*100000000))*1000000)
+
+    # todo sanity check delegated list
+    delegated_list.append(address)
+
+    for _address in delegated_list:
+        balances = get_balances(_address)
+
+        if len(balances) == 0:
+            continue
+
+        try:
+            pepecash = balances['PEPECASH']
+        except:
+            continue
+        votes += math.floor((float(pepecash)/(700000000*100000000))*1000000)
 
     return votes
 
@@ -199,7 +209,7 @@ def get_candidates(start, end):
 
     response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
     response_s = json.loads(response.text)
-    #print(response_s)
+
     transactions = response_s['result']
     list = []
     for transaction in transactions:
@@ -268,6 +278,31 @@ def asset_issuance(asset):
     response_s = json.loads(response.text)
     issuance = response_s['result']
     return issuance
+
+
+def get_submissions_data():
+
+    dir = os.path.join('static', 'submitted')
+    submissions = os.listdir(dir)
+
+    scores = {}
+    files = []
+
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    for submission in submissions:
+        hash = sha256_checksum(os.path.join(dir,submission))
+        c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
+        data = c.fetchone() # Hash is a unique constraint, will never be multiple
+        if data is not None:
+            (_, asset, _, _, _, _) = data
+            scores[asset] = {}
+            scores[asset]['cash_score'] = 0
+            scores[asset]['card_score'] = 0
+            files.append((os.path.join(dir, submission), asset))
+    conn.close()
+    return (files, scores)
 
 # get_votes_cards
 # input: address
@@ -387,53 +422,40 @@ def get_votes():
 
 @app.route('/get_submissions', methods=['GET'])
 def get_submissions():
-    dir = os.path.join('static', 'submitted')
-    submissions = os.listdir(dir)
-    files = []
+    candidates = []
+
+    (files, scores) = get_submissions_data()
+
     conn = sqlite3.connect('pepevote.db')
     c = conn.cursor()
 
     c.execute('SELECT * from votes')
     votes = c.fetchall()
-    scores = {}
 
     c.execute('SELECT * from delegates')
     delegates = c.fetchall()
 
-    for submission in submissions:
-        hash = sha256_checksum(os.path.join(dir,submission))
-        c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
-        data = c.fetchone() # Hash is a unique constraint, will never be multiple
-        if data is not None:
-            (_, asset, _, _, _, _) = data
-            scores[asset] = {}
-            scores[asset]['cash_score'] = 0
-            scores[asset]['card_score'] = 0
-            files.append((os.path.join(dir, submission), asset))
+    conn.close()
 
     # Get every delegate, and set them up in a dictionary
-    mapping_source = {}
-    mapping_delegate = {}
-    for (source, delegate) in delegates:
-        mapping_delegate[delegate] = source
-        mapping_source[source]   = delegate
+    delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
+    delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
+
+    for (delegated, delegate) in delegates: 
+        delegate_mapping[delegate].append(delegated)
+        delegated_mapping[delegated] = delegate
 
     for vote in votes:
         (address, _, set, _) = vote
         set = set.replace("'",'"')
 
-        if address in mapping_source:
-            if mapping_source[address] != "":
+        if address in delegated_mapping:
+            if delegated_mapping[address] != "":
                 # This address has been delegated, don't count its votes
                 continue
 
-        if address in mapping_delegate:
-            cash_votes = get_votes_cash(mapping[address])
-            card_votes = get_votes_cards(mapping[address])
-
-        else:
-            cash_votes = get_votes_cash(address)
-            card_votes = get_votes_cards(address)
+        cash_votes = get_votes_cash(address, delegate_mapping[address])
+        card_votes = get_votes_cards(address, delegate_mapping[address])
 
         user_votes = json.loads(set)
         for user_vote in user_votes:
@@ -443,8 +465,7 @@ def get_submissions():
             scores[user_vote['asset']]['cash_score'] += cash_score
             scores[user_vote['asset']]['card_score'] += card_score
 
-    conn.close()
-    candidates = []
+
     for file in files:
         (dir, asset) = file
         issuance = asset_issuance(asset)
