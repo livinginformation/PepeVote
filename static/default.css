@@ -111,18 +111,17 @@ footer {
 }
 
 .telegram {
-  height: 1.5rem;
+  height: 2rem;
   margin-left: .5rem;
 }
 
 .telegram-wrapper {
   position: fixed;
-  right: 2.5rem;
-  bottom: 2.5rem;
+  right: 3rem;
+  bottom: 5rem;
   padding: .58333rem;
   background-color: #5332a0 !important;
   color: white;
-  font-size: 16px;
   border-radius: 999rem;
   z-index: 100;
 }
