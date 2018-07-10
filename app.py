@@ -18,6 +18,9 @@ from twisted.internet import reactor, ssl
 from flask_cors import CORS, cross_origin
 from PIL import Image
 from collections import defaultdict
+from werkzeug.contrib.cache import SimpleCache
+
+cache = SimpleCache()
 
 conn = sqlite3.connect('pepevote.db')
 
@@ -297,6 +300,21 @@ def get_submissions_data():
             files.append((os.path.join(dir, submission), asset, hash))
     conn.close()
     return (files, scores)
+
+
+def get_current_block():
+    payload = {
+       "method": "get_running_info",
+       "params": {
+                     },
+       "jsonrpc": "2.0",
+       "id": 0
+      }
+
+    response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
+    response_s = json.loads(response.text)
+    block = response_s['result']['bitcoin_block_count']
+    return block
 
 # get_votes_cards
 # input: address
@@ -588,68 +606,65 @@ def vote():
     status = ''
     percent = 0
     if request.method == 'GET':
-        candidates = []
 
-        (files, scores) = get_submissions_data()
+        candidates = cache.get('candidates')
+        block = get_current_block()
 
-        conn = sqlite3.connect('pepevote.db')
-        c = conn.cursor()
+        if candidates is None:
 
-        c.execute('SELECT * from votes')
-        votes = c.fetchall()
+            candidates = []
 
-        c.execute('SELECT * from delegates')
-        delegates = c.fetchall()
+            (files, scores) = get_submissions_data()
 
-        conn.close()
+            conn = sqlite3.connect('pepevote.db')
+            c = conn.cursor()
 
-        # Get every delegate, and set them up in a dictionary
-        delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
-        delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
+            c.execute('SELECT * from votes')
+            votes = c.fetchall()
 
-        for (delegated, delegate) in delegates: 
-            delegate_mapping[delegate].append(delegated)
-            delegated_mapping[delegated] = delegate
+            c.execute('SELECT * from delegates')
+            delegates = c.fetchall()
 
-        for vote in votes:
-            (address, _, set, _) = vote
-            set = set.replace("'",'"')
+            conn.close()
 
-            if address in delegated_mapping:
-                if delegated_mapping[address] != "":
-                    # This address has been delegated, don't count its votes
-                    continue
+            # Get every delegate, and set them up in a dictionary
+            delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
+            delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
 
-            delegate_mapping[address].append(address)
-            cash_votes = get_votes_cash(delegate_mapping[address])
-            card_votes = get_votes_cards(delegate_mapping[address])
+            for (delegated, delegate) in delegates: 
+                delegate_mapping[delegate].append(delegated)
+                delegated_mapping[delegated] = delegate
 
-            user_votes = json.loads(set)
-            for user_vote in user_votes:
-                cash_score = (cash_votes * (int(user_vote['weight'])))/100
-                card_score = (card_votes * (int(user_vote['weight'])))/100
+            for vote in votes:
+                (address, _, set, _) = vote
+                set = set.replace("'",'"')
 
-                scores[user_vote['asset']]['cash_score'] += cash_score
-                scores[user_vote['asset']]['card_score'] += card_score
+                if address in delegated_mapping:
+                    if delegated_mapping[address] != "":
+                        # This address has been delegated, don't count its votes
+                        continue
+
+                delegate_mapping[address].append(address)
+                cash_votes = get_votes_cash(delegate_mapping[address])
+                card_votes = get_votes_cards(delegate_mapping[address])
+
+                user_votes = json.loads(set)
+                for user_vote in user_votes:
+                    cash_score = (cash_votes * (int(user_vote['weight'])))/100
+                    card_score = (card_votes * (int(user_vote['weight'])))/100
+
+                    scores[user_vote['asset']]['cash_score'] += cash_score
+                    scores[user_vote['asset']]['card_score'] += card_score
 
 
-        for file in files:
-            (dir, asset, hash) = file
-            issuance = asset_issuance(asset)
-            thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
-            candidates.append(thing)
+            for file in files:
+                (dir, asset, hash) = file
+                issuance = asset_issuance(asset)
+                thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
+                candidates.append(thing)
 
-        payload = {
-           "method": "get_running_info",
-           "params": {
-                         },
-           "jsonrpc": "2.0",
-           "id": 0
-          }
+            cache.set('candidates', candidates, timeout=60)
 
-        response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
-        response_s = json.loads(response.text)
-        block = response_s['result']['bitcoin_block_count']
         return render_template('vote.html', candidates=candidates, block_num=block)
 
     #  (address text, asset text, hash text PRIMARY KEY, block text, signature text, image text)''')
