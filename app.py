@@ -294,7 +294,7 @@ def get_submissions_data():
             scores[asset] = {}
             scores[asset]['cash_score'] = 0
             scores[asset]['card_score'] = 0
-            files.append((os.path.join(dir, submission), asset))
+            files.append((os.path.join(dir, submission), asset, hash))
     conn.close()
     return (files, scores)
 
@@ -464,7 +464,7 @@ def get_submissions():
 
 
     for file in files:
-        (dir, asset) = file
+        (dir, asset, hash) = file
         issuance = asset_issuance(asset)
         thing = (dir, asset, scores[asset]['card_score'], scores[asset]['cash_score'], issuance)
         candidates.append(thing)
@@ -588,21 +588,56 @@ def vote():
     status = ''
     percent = 0
     if request.method == 'GET':
-        dir = os.path.join('static', 'submitted')
-        submissions = os.listdir(dir)
         candidates = []
+
+        (files, scores) = get_submissions_data()
+
         conn = sqlite3.connect('pepevote.db')
         c = conn.cursor()
 
-        for submission in submissions:
-            hash = sha256_checksum(os.path.join(dir,submission))
-            c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
-            data = c.fetchone() # Hash is a unique constraint, will never be multiple
-            if data is not None:
-                (_, asset, _, _, _, image) = data
-                issuance = asset_issuance(asset)
-                candidates.append((asset, hash, image, issuance))
+        c.execute('SELECT * from votes')
+        votes = c.fetchall()
+
+        c.execute('SELECT * from delegates')
+        delegates = c.fetchall()
+
         conn.close()
+
+        # Get every delegate, and set them up in a dictionary
+        delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
+        delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
+
+        for (delegated, delegate) in delegates: 
+            delegate_mapping[delegate].append(delegated)
+            delegated_mapping[delegated] = delegate
+
+        for vote in votes:
+            (address, _, set, _) = vote
+            set = set.replace("'",'"')
+
+            if address in delegated_mapping:
+                if delegated_mapping[address] != "":
+                    # This address has been delegated, don't count its votes
+                    continue
+
+            delegate_mapping[address].append(address)
+            cash_votes = get_votes_cash(delegate_mapping[address])
+            card_votes = get_votes_cards(delegate_mapping[address])
+
+            user_votes = json.loads(set)
+            for user_vote in user_votes:
+                cash_score = (cash_votes * (int(user_vote['weight'])))/100
+                card_score = (card_votes * (int(user_vote['weight'])))/100
+
+                scores[user_vote['asset']]['cash_score'] += cash_score
+                scores[user_vote['asset']]['card_score'] += card_score
+
+
+        for file in files:
+            (dir, asset, hash) = file
+            issuance = asset_issuance(asset)
+            thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
+            candidates.append(thing)
 
         payload = {
            "method": "get_running_info",
