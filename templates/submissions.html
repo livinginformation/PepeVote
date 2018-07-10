@@ -1,34 +1,44 @@
 {% extends "layout.html" %}
 {% block body %}
-<br>
-The following images have completed the submission process.
-<br>
-<br>
-Note that submissions are currently test data, and are not representative of future submission quality.
-<br>
-<br>
-At some point in the near future (likely many points), this data will be wiped as development proceeds.
-<br>
-<br>
-{% for (candidate, asset, card_score, cash_score, issuance) in candidates %}
-<b>Asset name: </b>{{asset}}
-<br>
-<b>Asset issuance: </b>{{issuance}}
-<br>
-<b>Votes (cards): </b>{{card_score}}
-<br>
-<b>Votes (cash): </b>{{cash_score}}
-<br>
-<br>
-    <img src="{{ candidate }}" alt="Submission">
+    <a class='telegram-wrapper align-items-center justify-content-center flex-row d-flex' href='https://t.me/pepevote'>
+        Questions?
+        <img class='telegram' src="{{ url_for('static', filename='telegram.png') }}"></img>
+    </a> 
+<div class='flex-column align-items-center justify-content-center d-flex'>
+	<br>
+	<div class='nice-header'>This Week's Images</div>
+	<br>
     <br>
-    <br>
-----------------------------------------------------------------------------------------------------------------------
-<br>
-<br>
-{% endfor %}
-<br>
-<form action="/">
-    <input type="submit" value="Return" />
-</form>
+    <div class='alone-text center-text'>Note that submissions are currently test data, and are not representative of future submission quality.</div>
+	<br>
+	<br>
+	At some point in the near future (likely many points), this data will be wiped as development proceeds.
+	<br>
+	<br>
+	<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+		{% for (candidate, asset, card_score, cash_score, issuance) in candidates %}
+		<div class='submission flex-column align-items-center justify-content-center d-flex'>
+			<div class='center-text alone-text'>{{asset}}</div>
+			<div class='center-text'><b>{{issuance}} Created</b></div>
+            <img class='submission-pic' src="{{ candidate }}" alt="Submission">
+            <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+                <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
+                    <div><b>Card Votes </b></div>
+                    <div>{{card_score}}</div>
+                </div>
+                <div class='space-column'></div>
+                <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
+                    <div><b>Cash Votes </b></div>
+                    <div>{{cash_score}}</div>
+                </div>
+                <br>
+            </div>
+		</div>
+		{% endfor %}
+	</div>
+	<br>
+	<form action="/">
+			<input class='btn-primary' type="submit" value="Return" />
+	</form>
+<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
 {% endblock %}

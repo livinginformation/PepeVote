@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
-  <div class="d-flex flex-column">
+    <a class='telegram-wrapper align-items-center justify-content-center flex-row d-flex' href='https://t.me/pepevote'>
+        Questions?
+        <img class='telegram' src="{{ url_for('static', filename='telegram.png') }}"></img>
+    </a> 
+  <div class='flex-column align-items-center justify-content-center d-flex'>
+    <div class='nice-header'>Voting</div>
     <div>The following images have completed the submission process.</div>
     <div>Note that submissions are currently test data, and are not representative of future submission quality.</div>
     <div>At some point in the near future (likely many points), this data will be wiped as development proceeds.</div>
@@ -9,33 +14,21 @@
     <br>
     {{status}}
   </div>
-
-  <div class="col">
-    {% for (asset, hash, candidate) in candidates %}
-      <br>
-      <br>
-      Asset: {{ asset }}
-      <br>
-      <img src="{{ candidate }}" alt="image">
-      <br>
-      <div class="row">
-        <div class="col-md-2">
-          <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
+	<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+        {% for (asset, hash, candidate, issuance) in candidates %}
+        <div class='submission flex-column align-items-center justify-content-center d-flex'>
+            <div class='center-text alone-text'>{{asset}}</div>
+            <div class='center-text'><b>{{issuance}} Created</b></div>
+            <img class='submission-pic' src="{{ candidate }}" alt="Submission">
+            <input id="{{ asset }}slider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
+            <input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0" style="margin-left:20px"/>
         </div>
-        <div class="col-md-1">
-          <input id="{{asset}}number" type="number" min="0" max="100" step="1" name="{{ asset }}" value="0" style="margin-left:20px"/>
-        </div>
-      </div>
-    {% endfor %}
-    <br>
-    <br>
+        {% endfor %}
+	</div>
+  <div class="flex-column align-items-center justify-content-center d-flex">
     <span>Voting address: <input type="text" name="address" id="address"></span>
-    <br>
-    <br>
     <span>Percentage of votes allocated: <span id="total"></span></span>
-    <br>
-    <br>
-    <button type="submit" id="submit">Vote</button>
+    <button class='btn-primary' type="submit" id="submit">Vote</button>
     <div id="status">
       <span></span>
     </div>
@@ -69,13 +62,13 @@
     }
 
     $(document).ready(function(){
-      {% for (asset, hash, candidate) in candidates %} 
+      {% for (asset, hash, candidate, issuance) in candidates %} 
         jQuery("#{{ asset }}slider").slider({});
       {% endfor %}
 
       function updateSliders() {
         total = 0
-        {% for (asset, hash, candidate) in candidates %}
+        {% for (asset, hash, candidate, issuance) in candidates %}
           val = jQuery("#{{ asset }}number").val()
           if (val > 100) {
             jQuery("#{{ asset }}number").val(100)
@@ -91,7 +84,7 @@
       function updateValues() {
         total = 0
         thing = this
-        {% for (asset, hash, candidate) in candidates %}
+        {% for (asset, hash, candidate, issuance) in candidates %}
           val = jQuery("#{{ asset }}slider").slider("option", "value").val();
           jQuery("#{{ asset }}number").val(val);
           total = +total + +val
@@ -99,7 +92,7 @@
         jQuery("#total").text(total);
       }
 
-      {% for (asset, hash, candidate) in candidates %}
+      {% for (asset, hash, candidate, issuance) in candidates %}
         $(document).on("slide, change", "#{{ asset }}slider", updateValues);
         $(document).on("change, keyup", "#{{ asset }}number", updateSliders);
       {% endfor %}
@@ -110,7 +103,7 @@
         vote_string =  '{"block":"' + block + '",'
         vote_string += '"address":"' + address + '",'
         vote_string += '"votes":['
-        {% for (asset, hash, candidate) in candidates %}
+        {% for (asset, hash, candidate, issuance) in candidates %}
           vote_string += '{"asset":"{{ asset }}",'
           vote_string += '"hash":"{{ hash }}",'
 
@@ -129,7 +122,7 @@
         if (address == "") {
           $('#status span').text("Error: Please enter an address.")
         } else {
-          {% for (asset, hash, candidate) in candidates %}
+          {% for (asset, hash, candidate, issuance) in candidates %}
             val = jQuery("#{{ asset }}slider").slider("option", "value").val();
             total += +val
           {% endfor %}

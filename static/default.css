@@ -130,3 +130,19 @@ footer {
 .telegram-wrapper:hover {
   color: white;
 }
+
+.submission {
+	padding: 1rem;
+	background: rgba(33, 136, 56, .5);
+	border-radius: 5%;
+	margin: 2rem;
+	color: white;
+}
+
+.submission-pic {
+	height: 20rem;
+}
+
+.space-column {
+	width: .5rem;
+}

@@ -470,7 +470,7 @@ def get_submissions():
         candidates.append(thing)
 
     return render_template('submissions.html', candidates=candidates)
-
+ 
 
 @app.route('/create_submission', methods=['GET'])
 def create_submission():
@@ -600,7 +600,8 @@ def vote():
             data = c.fetchone() # Hash is a unique constraint, will never be multiple
             if data is not None:
                 (_, asset, _, _, _, image) = data
-                candidates.append((asset, hash, image))
+                issuance = asset_issuance(asset)
+                candidates.append((asset, hash, image, issuance))
         conn.close()
 
         payload = {
