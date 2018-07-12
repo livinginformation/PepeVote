@@ -9,8 +9,7 @@
     <div>The following images have completed the submission process.</div>
     <div>Note that submissions are currently test data, and are not representative of future submission quality.</div>
     <div>At some point in the near future (likely many points), this data will be wiped as development proceeds.</div>
-    <div>Fill in the address field with your signing address, and the boxes with whole numbers from 1-100, that sum up to 100 total (in percent).</div>
-    <div>If any of your vote weightings is not a whole number, it will be counted as zero.</div>
+    <div>Fill in the address field with your signing address, and the boxes with whole numbers from 1-100, representing a percentage of your total votes.
     <br>
     {{status}}
   </div>
@@ -40,7 +39,6 @@
 	</div>
   <div class="flex-column align-items-center justify-content-center d-flex">
     <span>Voting address: <input type="text" name="address" id="address"></span>
-    <span>Percentage of votes allocated: <span id="total"></span></span>
     <button class='btn btn-primary' type="submit" id="submit">Vote</button>
     <div id="status">
       <span></span>
@@ -80,7 +78,6 @@
       {% endfor %}
 
       function updateSliders() {
-        total = 0
         {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
           val = jQuery("#{{ asset }}number").val()
           if (val > 100) {
@@ -89,20 +86,15 @@
           }
 
           jQuery("#{{ asset }}slider").slider('setValue', val);
-          total = +total + +val
         {% endfor %}
-        jQuery("#total").text(total);
       }
   
       function updateValues() {
-        total = 0
         thing = this
         {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
           val = jQuery("#{{ asset }}slider").slider("option", "value").val();
           jQuery("#{{ asset }}number").val(val);
-          total = +total + +val
         {% endfor %}
-        jQuery("#total").text(total);
       }
 
       {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
@@ -130,21 +122,13 @@
       }
 
       $('#submit').click(function(){
-        total = 0
         address = jQuery("#address").val()
         if (address == "") {
           $('#status span').text("Error: Please enter an address.")
         } else {
-          {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
-            val = jQuery("#{{ asset }}slider").slider("option", "value").val();
-            total += +val
-          {% endfor %}
-          if (total > 100) {
-            $('#status span').text("Error: Votes add up to more than 100%");
-          } else {
-            message = generateMessage();
-            post('/submit_vote', {vote_string: message});
-          }
+
+          message = generateMessage();
+          post('/submit_vote', {vote_string: message});
         }
       });
     });
