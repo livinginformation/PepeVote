@@ -10,13 +10,20 @@
     <br>
     <br>
     <form action="/delegate_submit" method="POST">
-    Message: <input type="text" name="message">
-    <br>
-    <br>
-    Signature: <input type="text" name="signature">
-    <br>
-    <br>
-    <input type="submit" value="Submit">
+        Copy the following message, and sign it with Counterwallet:
+        <br>
+        <br>
+        <input type="text" name="delegate_string" value="{{ delegate_string }}" id="message" readonly="readonly">
+        <button type="button" class="btn" data-clipboard-target="#message">
+            <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+        </button>
+        Paste the signature from Counterwallet here:
+        <br>
+        <br>
+        <input type="text" name="signature">
+        <br>
+        <br>
+        <input type="submit" value="Delegate">
     </form>
     <br>
     <br>
@@ -28,4 +35,15 @@
         <input type="submit" value="Return" />
     </form>
 </div>
+{% endblock %}
+{% block script %}
+    <script>
+    var clipboard = new ClipboardJS('.btn');
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+    </script>
 {% endblock %}

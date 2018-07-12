@@ -19,19 +19,31 @@
     Delegate address: <input class="form-control" type="text" name="delegate">
     <br>
     <br>
-    <input class='btn btn-primary' type="submit" value="Submit">
+    <button class='btn btn-primary' type="submit" id="submit">Delegate Votes</button>
     </form>
     <br>
     <br>
-    Status: {{status}}
-    <br>
-    <br>
-    Once you have generated the message, submit it on this page:
-    <br>
-    <form action="/delegate_submit">
-        <input class='btn btn-primary' type="submit" value="Submit Delegation" />
-    </form>
-
-    <br>
+    <div id="status">
+      <span></span>
+    </div>
 </div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function(){
+      $('#submit').click(function(){
+        source = jQuery("#source").val()
+        delegate = jQuery("#delegate").val()
+        if (source == "") {
+            $('#status span').text("Error: Please enter a source address.")
+        } else if (delegate == ""){
+            $('#status span').text("Error: Please enter a delegate address.")
+        } else {
+
+          message = generateMessage();
+          post('/delegate_submit', {delegate_string: message});
+        }
+      });
+  });
+</script>
 {% endblock %}

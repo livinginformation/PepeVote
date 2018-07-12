@@ -530,17 +530,6 @@ def about():
 @app.route('/delegate_votes', methods=['GET','POST'])
 def delegate_votes():
     status = ''
-    if request.method == 'POST':
-        try:
-            source = request.form['source']
-            delegate = request.form['delegate']
-        except:
-            status = 'One of the fields is missing'
-            return render_template('delegate_votes.html', status=status)
-
-        status = 'Sign the following message with the source address in counterwallet: {"source":"' + source + '","delegate":"'+ delegate + '"}'
-        return render_template('delegate_votes.html', status=status)
-
     return render_template('delegate_votes.html', status=status)
 
 
