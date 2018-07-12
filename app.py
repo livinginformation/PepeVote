@@ -542,16 +542,15 @@ def delegate_submit():
     signature = ''
     delegate_string = ''
 
-    if 'message'   in request.form: message   = request.form['message']
+    if 'message'   in request.form: delegate_string   = request.form['message']
     if 'signature' in request.form: signature = request.form['signature']
-    if 'delegate_string' in request.form: delegate_string = request.form['delegate_string']
 
-    if message == "" or signature == "":
-        status = 'Message/Signature is missing'
+    if signature == "":
+        status = 'Signature is missing'
         return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     try:
-        message_object = json.loads(message)
+        message_object = json.loads(delegate_string)
     except:
         print("errored.")
         status='message is not properly formatted JSON'
@@ -571,7 +570,7 @@ def delegate_submit():
 
         return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
-    data = BitcoinMessage(message)
+    data = BitcoinMessage(delegate_string)
     verified = VerifyMessage(source, data, signature)
 
     if not verified:
