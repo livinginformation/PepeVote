@@ -144,3 +144,19 @@ footer {
 .space-column {
 	width: .5rem;
 }
+
+.vote-slider {
+  background-color: #E4E7E7;
+}
+
+.slider-track-high, #slider12c .slider-track-high {
+	background: #E4E7E7!important;
+}
+
+.slider-track-low, #slider12c .slider-track-low {
+	background: #E4E7E7!important;
+}
+
+.slider-selection {
+	background: #E4E7E7!important;
+}
