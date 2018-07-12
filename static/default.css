@@ -144,3 +144,7 @@ footer {
 .space-column {
 	width: .5rem;
 }
+
+.vote-slider {
+  background-color: #E4E7E7;
+}
