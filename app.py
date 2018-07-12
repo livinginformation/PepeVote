@@ -496,60 +496,15 @@ def get_votes():
 
 @app.route('/get_submissions', methods=['GET'])
 def get_submissions():
-    candidates = []
+    if request.method == 'GET':
 
-    (files, scores) = get_submissions_data()
+        candidates = cache.get('candidates')
 
-    conn = sqlite3.connect('pepevote.db')
-    c = conn.cursor()
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
 
-    c.execute('SELECT * from votes')
-    votes = c.fetchall()
-
-    c.execute('SELECT * from delegates')
-    delegates = c.fetchall()
-
-    conn.close()
-
-    # Get every delegate, and set them up in a dictionary
-    delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
-    delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
-
-    for (delegated, delegate) in delegates: 
-        delegate_mapping[delegate].append(delegated)
-        delegated_mapping[delegated] = delegate
-
-    print("--------------")
-    print(delegate_mapping)
-    for vote in votes:
-        (address, _, set, _) = vote
-        set = set.replace("'",'"')
-
-        if address in delegated_mapping:
-            if delegated_mapping[address] != "":
-                # This address has been delegated, don't count its votes
-                continue
-
-        delegate_mapping[address].append(address)
-        cash_votes = get_votes_cash(delegate_mapping[address])
-        card_votes = get_votes_cards(delegate_mapping[address])
-
-        user_votes = json.loads(set)
-        for user_vote in user_votes:
-            cash_score = (cash_votes * (int(user_vote['weight'])))/100
-            card_score = (card_votes * (int(user_vote['weight'])))/100
-
-            scores[user_vote['asset']]['cash_score'] += cash_score
-            scores[user_vote['asset']]['card_score'] += card_score
-
-
-    for file in files:
-        (dir, asset, hash) = file
-        issuance = asset_issuance(asset)
-        thing = (dir, asset, scores[asset]['card_score'], scores[asset]['cash_score'], issuance)
-        candidates.append(thing)
-
-    return render_template('submissions.html', candidates=candidates)
+        return render_template('vote.html', candidates=candidates)
  
 
 @app.route('/create_submission', methods=['GET'])
