@@ -597,7 +597,7 @@ def delegate_votes():
 
     delegate_string = ''
     if 'delegate_string' in request.form: delegate_string = request.form['delegate_string']
-    
+
     return render_template('delegate_submit.html', delegate_string=delegate_string)
 
 
@@ -606,44 +606,43 @@ def delegate_submit():
     if request.method == 'GET':
         return render_template('delegate_submit.html')
 
-    message   = ''
+    delegate_string   = ''
     signature = ''
-    delegate_string = ''
 
-    if 'message'   in request.form: message   = request.form['message']
+    if 'delegate_string'   in request.form: delegate_string   = request.form['delegate_string']
     if 'signature' in request.form: signature = request.form['signature']
 
     if signature == "":
         status = 'Signature is missing'
-        return render_template('delegate_submit.html', status=status, message=message)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     try:
-        message_object = json.loads(message)
+        delegate_string_object = json.loads(delegate_string)
     except:
         print("errored.")
-        status='message is not properly formatted JSON'
-        return render_template('delegate_submit.html', status=status, message=message)
+        status='Delegate String is not properly formatted JSON'
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     try:
-        source   = message_object['source']
-        delegate     = message_object['delegate']
+        source   = delegate_string_object['source']
+        delegate     = delegate_string_object['delegate']
 
     except:
 
-        if not 'source' in message_object:
+        if not 'source' in delegate_string_object:
             status = 'Source field is missing.'
 
-        if not 'delegate' in message_object:
+        if not 'delegate' in delegate_string_object:
             status = 'Delegate field is missing.'
 
-        return render_template('delegate_submit.html', status=status, message=message)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
-    data = BitcoinMessage(message)
+    data = BitcoinMessage(delegate_string)
     verified = VerifyMessage(source, data, signature)
 
     if not verified:
         status = 'Verification failed.'
-        return render_template('delegate_submit.html', status=status, message=message)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     tuple = (source, delegate)
     conn = sqlite3.connect('pepevote.db')
@@ -656,7 +655,7 @@ def delegate_submit():
     print('Delegation processed successfully.')
 
     status = 'Delegation processed successfully.'
-    return render_template('delegate_submit.html', status=status, message=message)
+    return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
 
 @app.route('/vote', methods=['GET', 'POST'])
