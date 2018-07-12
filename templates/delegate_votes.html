@@ -38,7 +38,7 @@
             $('#status span').text("Error: Please enter a delegate address.")
         } else {
 
-          message = generateMessage();
+          message = '{"source":"' + source + '","delegate":"'+ delegate + '"}'
           post('/delegate_submit', {delegate_string: message});
         }
       });
