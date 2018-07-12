@@ -12,10 +12,10 @@
     <b>Please note:</b> Delegated votes are currently non-transferrable. Your delegate cannot delegate votes on your behalf.
     <br>
     <br>
-    Source address: <input class="form-control" type="text" name="source">
+    Source address: <input class="form-control" type="text" name="source" id="source">
     <br>
     <br>
-    Delegate address: <input class="form-control" type="text" name="delegate">
+    Delegate address: <input class="form-control" type="text" name="delegate" id="delegate">
     <br>
     <br>
     <button class='btn btn-primary' type="submit" id="submit">Delegate Votes</button>
@@ -51,7 +51,7 @@
       document.body.appendChild(form);
       form.submit();
     }
-    
+
     $(document).ready(function(){
       $('#submit').click(function(){
         source = jQuery("#source").val()
