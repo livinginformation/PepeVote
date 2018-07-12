@@ -50,6 +50,7 @@ footer {
 
 .alone-text {
   font-size: 28px;
+  text-align: center;
 }
 
 .pepe-background {
@@ -161,14 +162,18 @@ footer {
 .divider {
   width: .15rem;
   background: black;
-  flex-basis: 20%
-  margin: auto;
+  margin: 3rem;
 }
 
 .pepe-sign {
-  width: 30rem;
+  flex: 1;
 }
 
 .man-sign {
-  width: 30rem;
+  flex: 1;
 }
+
+.submit_hold {
+  width: 50rem;
+}
+
