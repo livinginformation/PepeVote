@@ -640,6 +640,7 @@ def create_vote():
 @app.route('/submit_vote', methods=['GET', 'POST'])
 def submit_vote():
     if request.method == 'GET':
+        print(request.form)
         return render_template('submit_vote.html')
 
     else:
