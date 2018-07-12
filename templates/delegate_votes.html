@@ -63,7 +63,7 @@
         } else {
 
           message = '{"source":"' + source + '","delegate":"'+ delegate + '"}'
-          post('/delegate_submit', {delegate_string: message});
+          post('/delegate_votes', {delegate_string: message});
         }
       });
   });
