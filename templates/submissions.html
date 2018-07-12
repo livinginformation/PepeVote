@@ -12,29 +12,26 @@
 	<br>
 	<br>
 	<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-		{% for (candidate, asset, card_score, cash_score, issuance) in candidates %}
-		<div class='submission flex-column align-items-center justify-content-center d-flex'>
-			<div class='center-text alone-text'>{{asset}}</div>
-			<div class='center-text'><b>{{issuance}} Created</b></div>
+        {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+        <div class='submission flex-column align-items-center justify-content-center d-flex'>
+            <div class='center-text alone-text'>{{asset}}</div>
+            <div class='center-text'><b>{{issuance}} Created</b></div>
+            <br>
             <img class='submission-pic' src="{{ candidate }}" alt="Submission">
             <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-                <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
-                    <div><b>Card Votes </b></div>
-                    <div>{{card_score}}</div>
-                </div>
-                <div class='space-column'></div>
-                <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
-                    <div><b>Cash Votes </b></div>
-                    <div>{{cash_score}}</div>
-                </div>
-                <br>
+              <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
+                <div><b>Card Votes </b></div>
+                <div>{{card_score}}</div>
+              </div>
+              <div class='space-column'></div>
+              <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
+                <div><b>Cash Votes </b></div>
+                <div>{{cash_score}}</div>
+              </div>
+              <br>
             </div>
-		</div>
-		{% endfor %}
+        </div>
+        {% endfor %}
 	</div>
-	<br>
-	<form action="/">
-			<input class='btn-primary' type="submit" value="Return" />
-	</form>
-<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+</div>
 {% endblock %}
