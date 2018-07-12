@@ -504,8 +504,8 @@ def get_submissions():
             print("Shouldn't be here")
             candidates = update_scores()
 
-        return render_template('vote.html', candidates=candidates)
- 
+        return render_template('submissions.html', candidates=candidates)
+
 
 @app.route('/create_submission', methods=['GET'])
 def create_submission():
