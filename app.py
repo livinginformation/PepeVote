@@ -437,6 +437,7 @@ def ajaxtest():
 
 @app.route('/rpwverify')
 def rpwverify():
+    print(request)
     return json.dumps({'success':True, 'status': 'Please display this message.'}), 200, {'ContentType':'application/json'} 
 
 

@@ -2,7 +2,7 @@
 {% block body %}
 <div class='flex-column align-items-center justify-content-center d-flex'>
     <div class='nice-header'>Vote Submission</div>
-    <div class='alone-text'>To submit the vote you can manually sign <b>or</b> you can use the Pepewallet</div>
+    <div class='alone-text'>To submit the vote you can manually sign <b>or</b> you can use RarePepeWallet</div>
     <div class='submit-holder flex-row justify-content-between d-flex'>
         <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
             <br>
@@ -28,9 +28,9 @@
         </div>
         <div class='divider'></div>
         <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
-            <button id='pepe-sign' class='btn btn-primary' type="submit" id="submit">Sign With Pepe</button>
+            <button id='pepe-sign' class='btn btn-primary' type="submit" id="submit">Sign With RarePepeWallet</button>
             <iframe id='pepe-frame' frameborder='0' noresize='noresize' style='display:none; position: absolute; background: transparent; width:400px; height:400px;' 
-                src="https://rarepepewallet.com/?who=pepevote&msg=stuff&return=https://107.155.93.86:5001/rpwverify" frameborder="0">
+                src="https://rarepepewallet.com/?who=pepevote&msg={{ vote_string }}&return=https://107.155.93.86:5001/rpwverify" frameborder="0">
             </iframe>
         </div>
     </div>
