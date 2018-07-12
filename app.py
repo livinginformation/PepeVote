@@ -19,6 +19,12 @@ from flask_cors import CORS, cross_origin
 from PIL import Image
 from collections import defaultdict
 from werkzeug.contrib.cache import SimpleCache
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+scheduler = BackgroundScheduler()
+job = scheduler.add_job(update_scores, 'interval', minutes=2)
+scheduler.start()
 
 cache = SimpleCache()
 
@@ -316,6 +322,64 @@ def get_current_block():
     block = response_s['result']['bitcoin_block_count']
     return block
 
+
+def update_scores():
+    print("Updating scores")
+    candidates = []
+
+    (files, scores) = get_submissions_data()
+
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    c.execute('SELECT * from votes')
+    votes = c.fetchall()
+
+    c.execute('SELECT * from delegates')
+    delegates = c.fetchall()
+
+    conn.close()
+
+    # Get every delegate, and set them up in a dictionary
+    delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
+    delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
+
+    for (delegated, delegate) in delegates: 
+        delegate_mapping[delegate].append(delegated)
+        delegated_mapping[delegated] = delegate
+
+    for vote in votes:
+        (address, _, set, _) = vote
+        set = set.replace("'",'"')
+
+        if address in delegated_mapping:
+            if delegated_mapping[address] != "":
+                # This address has been delegated, don't count its votes
+                continue
+
+        delegate_mapping[address].append(address)
+        cash_votes = get_votes_cash(delegate_mapping[address])
+        card_votes = get_votes_cards(delegate_mapping[address])
+
+        user_votes = json.loads(set)
+        for user_vote in user_votes:
+            cash_score = (cash_votes * (int(user_vote['weight'])))/100
+            card_score = (card_votes * (int(user_vote['weight'])))/100
+
+            scores[user_vote['asset']]['cash_score'] += cash_score
+            scores[user_vote['asset']]['card_score'] += card_score
+
+
+    for file in files:
+        (dir, asset, hash) = file
+        issuance = asset_issuance(asset)
+        thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
+        candidates.append(thing)
+
+    cache.set('candidates', candidates, timeout=300)
+    return candidates
+
+
 # get_votes_cards
 # input: address
 # output: integer number of votes based on card holdings (except PEPECASH)
@@ -593,93 +657,16 @@ def delegate_submit():
 
 @app.route('/vote', methods=['GET', 'POST'])
 def vote():
-    status = ''
-    percent = 0
     if request.method == 'GET':
 
         candidates = cache.get('candidates')
         block = get_current_block()
 
         if candidates is None:
-
-            candidates = []
-
-            (files, scores) = get_submissions_data()
-
-            conn = sqlite3.connect('pepevote.db')
-            c = conn.cursor()
-
-            c.execute('SELECT * from votes')
-            votes = c.fetchall()
-
-            c.execute('SELECT * from delegates')
-            delegates = c.fetchall()
-
-            conn.close()
-
-            # Get every delegate, and set them up in a dictionary
-            delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
-            delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
-
-            for (delegated, delegate) in delegates: 
-                delegate_mapping[delegate].append(delegated)
-                delegated_mapping[delegated] = delegate
-
-            for vote in votes:
-                (address, _, set, _) = vote
-                set = set.replace("'",'"')
-
-                if address in delegated_mapping:
-                    if delegated_mapping[address] != "":
-                        # This address has been delegated, don't count its votes
-                        continue
-
-                delegate_mapping[address].append(address)
-                cash_votes = get_votes_cash(delegate_mapping[address])
-                card_votes = get_votes_cards(delegate_mapping[address])
-
-                user_votes = json.loads(set)
-                for user_vote in user_votes:
-                    cash_score = (cash_votes * (int(user_vote['weight'])))/100
-                    card_score = (card_votes * (int(user_vote['weight'])))/100
-
-                    scores[user_vote['asset']]['cash_score'] += cash_score
-                    scores[user_vote['asset']]['card_score'] += card_score
-
-
-            for file in files:
-                (dir, asset, hash) = file
-                issuance = asset_issuance(asset)
-                thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
-                candidates.append(thing)
-
-            cache.set('candidates', candidates, timeout=60)
+            print("Shouldn't be here")
+            candidates = update_scores()
 
         return render_template('vote.html', candidates=candidates, block_num=block)
-
-    #  (address text, asset text, hash text PRIMARY KEY, block text, signature text, image text)''')
-
-    else:
-        # This is a post request with the entire string produced by the user
-        # User has passed in weightings
-        allocations = request.form
-        print(allocations)
-        pass
-        #if value.isnumeric():
-        #    percent += int(value)
-        #    vote_string += '{"asset":"' + key + '","weight":"' + value + '"},'
-
-   # vote_string = vote_string[:-1] # remove the comma from the end
-   # vote_string += ']}'
-
-   # print(percent)
-   # print(vote_string)
-
-        if percent > 100:
-            status = 'Sum of vote weights is more than 100%!'
-
-        else:
-            status = "Sign the following message with Counterwallet:" # + vote_string
 
 
 @app.route('/create_vote', methods=['GET'])
