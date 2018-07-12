@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-<a class='telegram-wrapper align-items-center justify-content-center flex-row d-flex' href='https://t.me/pepevote'>
-    Questions?
-    <img class='telegram' src="{{ url_for('static', filename='telegram.png') }}"></img>
-</a>
 <div class="container">
     <br>
     <div class='nice-header'>Vote Delegation</div>
@@ -13,7 +9,7 @@
     If you are uncomfortable using your main token storage address to sign messages, you can delegate signing to an empty secondary address.
     <br>
     <br>
-    <b>Please note:</b> An address can only be the delegate for a single address. Assets held by the delegate will not be considered in the voting process.
+    <b>Please note:</b> Delegated votes are currently non-transferrable. Your delegate cannot delegate votes on your behalf.
     <br>
     <br>
     <form action="/delegate_votes" method="POST">

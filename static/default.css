@@ -145,6 +145,9 @@ footer {
 	width: .5rem;
 }
 
+.vote-slider {
+  background-color: #E4E7E7;
+}
 
 .slider-track-high, #slider12c .slider-track-high {
 	background: #E4E7E7!important;
