@@ -540,20 +540,22 @@ def delegate_submit():
 
     message   = ''
     signature = ''
+    delegate_string = ''
 
     if 'message'   in request.form: message   = request.form['message']
     if 'signature' in request.form: signature = request.form['signature']
+    if 'delegate_string' in request.form: delegate_string = request.form['delegate_string']
 
     if message == "" or signature == "":
         status = 'Message/Signature is missing'
-        return render_template('delegate_submit.html', status=status)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     try:
         message_object = json.loads(message)
     except:
         print("errored.")
         status='message is not properly formatted JSON'
-        return render_template('delegate_submit.html', status=status)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     try:
         source   = message_object['source']
@@ -567,14 +569,14 @@ def delegate_submit():
         if not 'delegate' in message_object:
             status = 'Delegate field is missing.'
 
-        return render_template('delegate_submit.html', status=status)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     data = BitcoinMessage(message)
     verified = VerifyMessage(source, data, signature)
 
     if not verified:
         status = 'Verification failed.'
-        return render_template('delegate_submit.html', status=status)
+        return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     tuple = (source, delegate)
     conn = sqlite3.connect('pepevote.db')
@@ -587,7 +589,7 @@ def delegate_submit():
     print('Delegation processed successfully.')
 
     status = 'Delegation processed successfully.'
-    return render_template('delegate_submit.html', status=status)
+    return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
 
 @app.route('/vote', methods=['GET', 'POST'])
