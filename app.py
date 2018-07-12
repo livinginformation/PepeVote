@@ -23,8 +23,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 scheduler = BackgroundScheduler()
-job = scheduler.add_job(update_scores, 'interval', minutes=2)
-scheduler.start()
 
 cache = SimpleCache()
 
@@ -915,6 +913,10 @@ def main():
     parser.add_option('--tornado', help='Tornado non-blocking web server', action="callback", callback=tornado,type="int");
     parser.add_option('--twisted', help='Twisted event-driven web server', action="callback", callback=twisted, type="int");
     parser.add_option('--builtin', help='Built-in Flask web development server', action="callback", callback=builtin, type="int");
+    job = scheduler.add_job(update_scores, 'interval', minutes=2)
+    scheduler.start()
+    update_scores()
+    # update_scores runs twice sometimes on startup, that's ok. Not a huge deal.
     (options, args) = parser.parse_args()
     parser.print_help()
 
