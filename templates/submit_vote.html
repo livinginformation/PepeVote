@@ -1,40 +1,40 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class='nice-header'>Vote Submission</div>
-<div class='flex-row align-items-center justify-content-center d-flex'>
-	<div>To submit the vote you can manually sign with a counterparty wallet or you can use the Pepewallet</div>
-	<div>Note that submissions are currently test data, and are not representative of future submission quality.</div>
-	<div>At some point in the near future (likely many points), this data will be wiped as development proceeds.</div>
-	<div>Fill in the address field with your signing address, and the boxes with whole numbers from 1-100, representing a percentage of your total votes.
+<div class='flex-column align-items-center justify-content-center d-flex'>
+    <div class='nice-header'>Vote Submission</div>
+    <div class='alone-text'>To submit the vote you can manually sign <b>or</b> you can use the Pepewallet</div>
+    <div class='flex-row justify-content-start d-flex'>
+        <div class='flex-column align-items-center justify-content-center d-flex'>
+            <br>
+            <form class='man-sign p-2 flex-column align-items-center justify-content-center d-flex' action="/submit_vote" method="POST">
+                Copy the following message, and sign it with Counterwallet:
+                <br>
+                <br>
+                <input type="text" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
+                <button type="button" class="btn" data-clipboard-target="#message">
+                    <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+                </button>
+                <br>
+                Paste the signature from Counterwallet here:
+                <br>
+                <input type="text" name="signature">
+                <br>
+                <input class='btn btn-primary' type="submit" value="Vote">
+            </form>
+            <br>
+            Status: {{status}}
+            <br>
+            <br>
+            <form action="/create_vote">
+                <input class='btn btn-primary' type="submit" value="Return" />
+            </form>
+        </div>
+        <div class='divider'></div>
+        <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
+            <button class='btn btn-primary' type="submit" id="submit">Sign With Pepe</button>
+        </div>
+    </div>
 </div>
-<br>
-<form action="/submit_vote" method="POST">
-Copy the following message, and sign it with Counterwallet:
-<br>
-<br>
-<input type="text" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
-<button type="button" class="btn" data-clipboard-target="#message">
-    <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
-</button>
-<br>
-<br>
-Paste the signature from Counterwallet here:
-<br>
-<br>
-<input type="text" name="signature">
-<br>
-<br>
-<input type="submit" value="Vote">
-</form>
-<br>
-<br>
-Status: {{status}}
-<br>
-<br>
-<br>
-<form action="/create_vote">
-    <input type="submit" value="Return" />
-</form>
 {% endblock %}
 {% block script %}
     <script>

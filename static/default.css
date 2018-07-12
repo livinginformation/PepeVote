@@ -145,9 +145,6 @@ footer {
 	width: .5rem;
 }
 
-.vote-slider {
-  background-color: #E4E7E7;
-}
 
 .slider-track-high, #slider12c .slider-track-high {
 	background: #E4E7E7!important;
@@ -159,4 +156,19 @@ footer {
 
 .slider-selection {
 	background: #E4E7E7!important;
+}
+
+.divider {
+  width: .15rem;
+  background: black;
+  flex-basis: 20%
+  margin: auto;
+}
+
+.pepe-sign {
+  width: 30rem;
+}
+
+.man-sign {
+  width: 30rem;
 }
