@@ -148,3 +148,18 @@ footer {
 .vote-slider {
   background-color: #E4E7E7;
 }
+
+.slider.slider-horizontal .slider-selection, .slider.slider-horizontal .slider-track-low, .slider.slider-horizontal .slider-track {
+	background-color: #E4E7E7!important;
+}
+
+.slider.slider-horizontal .slider-selection, .slider.slider-horizontal .slider-track-low, .slider.slider-horizontal .slider-track .slider-selection {
+	background-color: #E4E7E7!important;
+}
+.slider.slider-horizontal .slider-selection, .slider.slider-horizontal .slider-track-low, .slider.slider-horizontal .slider-track .slider-track-low {
+	background-color: #E4E7E7!important;
+}
+
+.slider.slider-horizontal .slider-selection, .slider.slider-horizontal .slider-track-low, .slider.slider-horizontal .slider-track .slider-track-high {
+	background-color: #E4E7E7!important;
+}
