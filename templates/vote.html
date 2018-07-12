@@ -124,11 +124,10 @@
         } else {
 
           message = generateMessage();
-          $.get('/submit_vote', {vote_string: message});
+          post('/vote', {vote_string: message});
         }
       });
     });
-		$jQuery('.slider-selection').css('background', 'red')
   </script>
 {% endblock %}
 

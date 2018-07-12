@@ -631,6 +631,11 @@ def vote():
 
         return render_template('vote.html', candidates=candidates, block_num=block)
 
+    else:
+        vote_string = ''
+        if 'vote_string' in request.form: vote_string = request.form['vote_string']
+        return render_template('submit_vote.html', vote_string=vote_string)
+
 
 @app.route('/create_vote', methods=['GET'])
 def create_vote():

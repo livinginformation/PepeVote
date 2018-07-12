@@ -1,39 +1,40 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="container">
+<div class="flex-column align-items-center justify-content-center d-flex">
     <br>
-    <div class='nice-header'>
-        Vote Delegation:
+		<div class='nice-header'>Vote Delegation</div>
+		<div class='alone-text'>To submit the delegation you can manually sign <b>or</b> you can use the Pepewallet</div>
+		<div class='submit-holder flex-row justify-content-between d-flex'>
+        <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
+            <br>
+            <form class='center-text flex-column align-items-center justify-content-center d-flex' action="/submit_vote" method="POST">
+							Put the message from the previous page and the signature from counterwallet here.
+							<br>
+                <br>
+								<input type="text" name="delegate_string" value="{{ delegate_string }}" id="delegate_string" readonly="readonly">
+								<button type="button" class="btn" data-clipboard-target="#delegate_string">
+										<img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+								</button>
+                <br>
+                Paste the signature from Counterwallet here
+                <br>
+                <input type="text" name="signature">
+                <br>
+                <input class='btn btn-primary' type="submit" value="Delegate">
+            </form>
+            <br>
+            Status: {{status}}
+            <br>
+            <br>
+        </div>
+        <div class='divider'></div>
+        <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
+            <button id='pepe-sign' class='btn btn-primary' type="submit" id="submit">Sign With Pepe</button>
+            <iframe id='pepe-frame' frameborder='0' noresize='noresize' style='display:none; position: absolute; background: transparent; width:400px; height:400px;' 
+                src="https://rarepepewallet.com/?who=pepevote&msg=stuff&return=https://107.155.93.86:5001/rpwverify" frameborder="0">
+            </iframe>
+        </div>
     </div>
-    <br>
-    Put the message from the previous page and the signature from counterwallet here.
-    <br>
-    <br>
-    <form action="/delegate_submit" method="POST">
-        Copy the following message, and sign it with Counterwallet:
-        <br>
-        <br>
-        <input type="text" name="delegate_string" value="{{ delegate_string }}" id="delegate_string" readonly="readonly">
-        <button type="button" class="btn" data-clipboard-target="#delegate_string">
-            <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
-        </button>
-        Paste the signature from Counterwallet here:
-        <br>
-        <br>
-        <input type="text" name="signature">
-        <br>
-        <br>
-        <input type="submit" value="Delegate">
-    </form>
-    <br>
-    <br>
-    Status: {{status}}
-    <br>
-    <br>
-    <br>
-    <form action="/delegate_votes">
-        <input type="submit" value="Return" />
-    </form>
 </div>
 {% endblock %}
 {% block script %}
