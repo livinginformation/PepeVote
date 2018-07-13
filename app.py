@@ -583,7 +583,7 @@ def get_submissions():
         return render_template('submissions.html', candidates=candidates)
 
 
-@app.route('/create_submission_beta', methods=['GET'])
+@app.route('/create_submission_beta', methods=['GET', 'POST'])
 def create_submission_beta():
     if request.method == "GET":
         return render_template('create_submission_beta.html')
