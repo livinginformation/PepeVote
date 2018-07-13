@@ -379,6 +379,47 @@ def update_scores():
     return candidates
 
 
+def insert_into_delegates(source, delegate):
+    tuple = (source, delegate)
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    c.execute("INSERT OR REPLACE INTO delegates(source, delegate) VALUES(?,?)", tuple)
+    conn.commit()
+    conn.close()
+
+
+def insert_into_verified_messages(address, asset, hash, block, signature, image):
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    tuple = (address, asset, hash, block, signature, location)
+    c.execute("INSERT INTO verified_messages(address, asset, hash, block, signature, image) VALUES(?, ?, ?, ?, ?, ?)", tuple)
+    conn.commit()
+    conn.close()
+
+
+def get_existing_vote(address):
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    # Check if this is a duplicate entry
+    c.execute('SELECT * FROM votes WHERE address=?', (address,))
+    entry = c.fetchone()
+    conn.close()
+    return entry
+
+
+def get_existing_verified_message(hash, asset):
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    # Check if this is a duplicate entry
+    c.execute('SELECT * FROM verified_messages WHERE hash=? OR asset=?', (hash,asset))
+    entry = c.fetchone()
+    conn.close()
+    return entry
+
 # get_votes_cards
 # input: address
 # output: integer number of votes based on card holdings (except PEPECASH)
@@ -480,6 +521,39 @@ def upload_file():
     return render_template('create_submission.html', hash=hash)
 
 
+@app.route('/upload_beta', methods=['POST'])
+def upload_file_beta():
+    hash = 0
+    if 'image' not in request.files:
+        upload_error='No image uploaded.'
+        return render_template('create_submission_beta.html', upload_error=upload_error)
+
+    file = request.files['image']
+    f = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(f)
+
+    im = Image.open(file)
+
+    (width, height) = im.size
+    filetype        = im.format
+
+    if (width != 400):
+        upload_error = 'Image needs to be 400 pixels wide'
+        return render_template('create_submission_beta.html', upload_error=upload_error)
+
+    if (height != 560):
+        upload_error = 'Image needs to be 560 pixels tall'
+        return render_template('create_submission_beta.html', upload_error=upload_error)
+
+    if filetype != 'JPEG' and filetype != 'GIF' and filetype != 'PNG':
+        upload_error='File must be a jpeg, png, or gif'
+        return render_template('create_submission_beta.html', upload_error=upload_error)
+
+    hash = sha256_checksum(f)
+    print("File written: " + f)
+    return render_template('create_submission_beta.html', hash=hash)
+
+
 @app.route('/get_votes', methods=['GET'])
 def get_votes():
     print(request.args['address'])
@@ -509,6 +583,26 @@ def get_submissions():
         return render_template('submissions.html', candidates=candidates)
 
 
+@app.route('/create_submission_beta', methods=['GET'])
+def create_submission_beta():
+    if request.method == "GET":
+        return render_template('create_submission_beta.html')
+
+    address = ''
+    asset = ''
+    hash = ''
+    if 'address' in request.form: address = request.form['address']
+    if 'asset'   in request.form: asset   = request.form['asset']
+    if 'hash'    in request.form: hash    = request.form['hash']
+
+    block = get_current_block()
+
+    message = '{"block":"' + str(block) + '","address":"' + address + '","image_hash":"' + hash + '","asset":"' + asset + '"}'
+    msghash = 'hash!' #hash todo dohashinghere(message)
+
+    return render_template('create_submission_beta.html', message=message, hash=hash, msghash=msghash)
+
+
 @app.route('/create_submission', methods=['GET'])
 def create_submission():
     return render_template('create_submission.html')
@@ -524,17 +618,7 @@ def create_message():
     if 'asset'   in request.form: asset   = request.form['asset']
     if 'hash'    in request.form: hash    = request.form['hash']
 
-    payload = {
-       "method": "get_running_info",
-       "params": {
-                 },
-       "jsonrpc": "2.0",
-       "id": 0
-      }
-
-    response = requests.post(xcpd_url, data=json.dumps(payload), headers=headers, auth=auth)
-    response_s = json.loads(response.text)
-    block = response_s['result']['bitcoin_block_count']
+    block = get_current_block()
 
     message = '{"block":"' + str(block) + '","address":"' + address + '","image_hash":"' + hash + '","asset":"' + asset + '"}'
 
@@ -563,11 +647,11 @@ def delegate_submit():
     if request.method == 'GET':
         return render_template('delegate_submit.html')
 
-    delegate_string   = ''
-    signature = ''
+    delegate_string = ''
+    signature       = ''
 
-    if 'delegate_string'   in request.form: delegate_string   = request.form['delegate_string']
-    if 'signature' in request.form: signature = request.form['signature']
+    if 'delegate_string' in request.form: delegate_string = request.form['delegate_string']
+    if 'signature'       in request.form: signature       = request.form['signature']
 
     if signature == "":
         status = 'Signature is missing'
@@ -605,13 +689,7 @@ def delegate_submit():
         status = 'Verification failed.'
         return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
-    tuple = (source, delegate)
-    conn = sqlite3.connect('pepevote.db')
-    c = conn.cursor()
-
-    c.execute("INSERT OR REPLACE INTO delegates(source, delegate) VALUES(?,?)", tuple)
-    conn.commit()
-    conn.close()
+    insert_into_delegates(source, delegate)
 
     print('Delegation processed successfully.')
 
@@ -714,14 +792,7 @@ def submit_vote():
                 return render_template('submit_vote.html', status=status, vote_string=vote_string)
 
             else:
-                conn = sqlite3.connect('pepevote.db')
-                c = conn.cursor()
-
-                # Check if this is a duplicate entry
-                c.execute('SELECT * FROM votes WHERE address=?', (address,))
-                entry = c.fetchone()
-                conn.close()
-#             (address text PRIMARY KEY, block text, votes text, signature text)''')
+                entry = get_existing_vote(address)
 
                 if entry is not None:
                     # Check block height to see if message is reused
@@ -797,7 +868,6 @@ def submit_message():
 
             return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message)
 
-
         data = BitcoinMessage(message)
         verified = VerifyMessage(address, data, signature)
 
@@ -806,13 +876,7 @@ def submit_message():
             return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash)
 
         else:
-            conn = sqlite3.connect('pepevote.db')
-            c = conn.cursor()
-
-            # Check if this is a duplicate entry
-            c.execute('SELECT * FROM verified_messages WHERE hash=? OR asset=?', (hash,asset))
-            entry = c.fetchone()
-            conn.close()
+            entry = get_existing_verified_message(hash, asset)
 
             if entry:
                 registration_error = 'This asset or image has already been submitted this week.'
@@ -870,6 +934,131 @@ def submit_message():
                 location = os.path.join('static', 'submitted', submission_path[8:])
                 os.rename(submission_path, location)
 
+                insert_into_verified_messages(address, asset, hash, block, signature, image)
+
+                success = 'Verification succeeded, your art has been registered.'
+
+
+    try:
+        return render_template('create_submission.html', success=success,hash=hash,message=message)
+    except:
+        return render_template('create_submission.html')
+# When an image is uploaded, or a registration is submitted, we want to run the script that compares them, and sends them to submitted.
+# submitted will have a file mapping file names and asset names + issuance.
+# submission checker will only transfer if the image also has a matching doc in the verified file
+
+
+@app.route('/submit_message_beta', methods=['POST'])
+def submit_message_beta():
+    message   = ''
+    signature = ''
+
+    if 'message'   in request.form: message   = request.form['message']
+    if 'signature' in request.form: signature = request.form['signature']
+
+    if message == "" or signature == "":
+        registration_error = 'Message/Signature is missing'
+        return render_template('create_submission_beta.html', registration_error=registration_error)
+
+    else:
+
+        try:
+            message_object = json.loads(message)
+        except:
+            print("errored.")
+            registration_error='message is not properly formatted JSON'
+            return render_template('create_submission_beta.html', registration_error=registration_error)
+
+        try:
+            address = message_object['address']
+            asset   = message_object['asset']
+            hash    = message_object['image_hash']
+            block   = message_object['block']
+
+        except:
+
+            if not 'address' in message_object:
+                registration_error = 'Address field is missing.'
+
+            if not 'asset' in message_object:
+                registration_error = 'Asset field is missing.'
+
+            if not 'image_hash' in message_object:
+                registration_error = 'Hash field is missing.'
+                return render_template('create_submission_beta.html', registration_error=registration_error, message=message)
+
+            if not 'block' in message_object:
+                registration_error = 'Block field is missing.'
+
+            return render_template('create_submission_beta.html', registration_error=registration_error, hash=hash, message=message)
+
+
+        data = BitcoinMessage(message)
+        verified = VerifyMessage(address, data, signature)
+
+        if not verified:
+            registration_error = 'Verification failed.'
+            return render_template('create_submission_beta.html', registration_error=registration_error,message=message,hash=hash)
+
+        else:
+            entry = get_existing_verified_message(hash,asset)
+
+            if entry:
+                registration_error = 'This asset or image has already been submitted this week.'
+                return render_template('create_submission_beta.html', registration_error=registration_error,hash=hash,message=message)
+
+            else: # Entry is not a duplicate
+
+                # Check if address actually owns the asset in question
+                if not owns_asset(address, asset):
+                    registration_error = 'The provided address does not have the provided asset.'
+                    return render_template('create_submission_beta.html', registration_error=registration_error, hash=hash, message=message)
+
+                # Check if the burn fee is paid
+                paid = False
+
+                candidates = get_candidates(512000,520000)
+
+                for candidate in candidates:
+                    if hash == candidate:
+                        paid = True
+
+                        # TODO: Check if anyone has ever used this hash before
+
+                if not paid:
+                    registration_error = 'Burn fee has not been paid.'
+                    return render_template('create_submission_beta.html', registration_error=registration_error,message=message,hash=hash)
+
+                # TODO: Check if the asset is a duplicate of an existing one
+
+                # Check if hash matches an uploaded image
+                match = False
+
+                dir = 'uploads'
+                submissions = os.listdir(dir)
+
+                candidates = []
+                for submission in submissions:
+                    if not submission == "temp":
+                        candidates.append(os.path.join(dir, submission))
+
+                for candidate in candidates:
+                    candidate_hash = sha256_checksum(candidate)
+
+                    print(candidate)
+                    print(candidate_hash)
+
+                    if hash == candidate_hash:
+                        match = True
+                        submission_path = candidate
+
+                if not match:
+                    registration_error = 'No uploaded image has the provided hash.'
+                    return render_template('create_submission_beta.html', registration_error=registration_error, hash=hash, message=message)
+
+                location = os.path.join('static', 'submitted', submission_path[8:])
+                os.rename(submission_path, location)
+
                 conn = sqlite3.connect('pepevote.db')
                 c = conn.cursor()
 
@@ -882,12 +1071,10 @@ def submit_message():
 
 
     try:
-        return render_template('create_submission.html', success=success,hash=hash,message=message)
+        return render_template('create_submission_beta.html', success=success,hash=hash,message=message)
     except:
-        return render_template('create_submission.html')
-# When an image is uploaded, or a registration is submitted, we want to run the script that compares them, and sends them to submitted.
-# submitted will have a file mapping file names and asset names + issuance.
-# submission checker will only transfer if the image also has a matching doc in the verified file
+        return render_template('create_submission_beta.html')
+
 
 def main():
     parser = optparse.OptionParser(usage="%prog [options]  or type %prog -h (--help)")
