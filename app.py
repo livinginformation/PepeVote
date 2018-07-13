@@ -997,8 +997,7 @@ def submit_message_beta():
 
         try: 
             verified = VerifyMessage(address, data, signature)
-
-        except ValueError:
+        except:
             verified = False
 
         if not verified:
