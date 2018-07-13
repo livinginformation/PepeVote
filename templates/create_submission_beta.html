@@ -80,31 +80,25 @@
 
     {% else %}
     {% if not message and not registration_error %}
-        Your hash is: {{hash}}
-
-        <br>
-        <br>
-        <div class='alone-text'>4. Send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash. Use Counterwallet </div>
-        <br>
-        The amount of Pepecash to send changes from week to week.
-        <br>
-        Submission fee for the alpha: 1 Pepecash
-        <br>
-        <br>
-        <div class='alone-text'>5. Create a registration message </div>
-        <br>
-        <br>
-        <form action="/create_submission_beta" method="POST">
-        Registering Address: <input type="text" name="address">
-        <br>
-        <br>
-        Asset name: <input type="text" name="asset">
-        <br>
-        <br>
-        Image hash: <input type="text" name="hash">
-        <br>
-        <br>
-        <input type="submit" value="Generate">
+        <form action="/create_submission_beta" method="POST">    
+            <br>
+            <br>
+            Use Counterwallet to send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash.
+            <br>
+            The amount of Pepecash to send changes from week to week.
+            <br>
+            Current Submission Fee: 1 Pepecash 
+            <br>
+            Hash: <input type="text" name="hash" value="{{ hash }}" id="hash" readonly="readonly">
+            <br>
+            <br>
+            Registering Address: <input type="text" name="address">
+            <br>
+            <br>
+            Asset name: <input type="text" name="asset">
+            <br>
+            <br>
+            <input type="submit" value="Generate">
         </form>
         <br>
         {% if message_error %}
