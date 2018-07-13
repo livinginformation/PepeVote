@@ -117,14 +117,11 @@
                     <br>
                     <br>
                 {% endif %}
-                <div class='alone-text'>6. Use Counterwallet to sign the registration message hash with the address that burned the Pepecash.</div>
-                <br>
-                <br>
                 <div class='alone-text'>7. Submit the message and signature here:</div>
                 <br>
                 <form action="/submit_message_beta" method="POST">
                     <input type="text" style="display:none;" name="message" value="{{ message }}" id="message" readonly="readonly">
-                    <br>
+                    Use Counterwallet to sign the registration message hash with the address that burned the Pepecash.
                     <br>
                     Hash: <input type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
                     <br>
@@ -132,7 +129,7 @@
                     Signature: <input type="text" name="signature">
                     <br>
                     <br>
-                    <input type="submit" value="Submit">
+                    <input type="submit" value="Submit Signature">
                 </form>
             {% else %}
                 <br>

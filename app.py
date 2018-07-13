@@ -595,10 +595,13 @@ def create_submission_beta():
     if 'asset'   in request.form: asset   = request.form['asset']
     if 'hash'    in request.form: hash    = request.form['hash']
 
+    m = hashlib.sha256()
+
     block = get_current_block()
 
     message = '{"block":"' + str(block) + '","address":"' + address + '","image_hash":"' + hash + '","asset":"' + asset + '"}'
-    msghash = 'hash!' #hash todo dohashinghere(message)
+    m.update(bytes(message, encoding='utf-8'))
+    msghash = m.hexdigest()
 
     return render_template('create_submission_beta.html', message=message, hash=hash, msghash=msghash)
 
@@ -992,16 +995,17 @@ def submit_message_beta():
 
             return render_template('create_submission_beta.html', registration_error=registration_error, hash=hash, message=message)
 
-
-        data = BitcoinMessage(message)
-
+        m = hashlib.sha256()
+        m.update(bytes(message, encoding='utf-8'))
+        data = BitcoinMessage(m.hexdigest())
+ 
         try: 
             verified = VerifyMessage(address, data, signature)
         except:
             verified = False
 
         if not verified:
-            registration_error = 'Verification failed.'
+            registration_error = 'Signature verification failed.'
             return render_template('create_submission_beta.html', registration_error=registration_error,message=message,hash=hash)
 
         else:
