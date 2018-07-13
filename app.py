@@ -994,7 +994,12 @@ def submit_message_beta():
 
 
         data = BitcoinMessage(message)
-        verified = VerifyMessage(address, data, signature)
+
+        try: 
+            verified = VerifyMessage(address, data, signature)
+
+        except ValueError:
+            verified = False
 
         if not verified:
             registration_error = 'Verification failed.'
