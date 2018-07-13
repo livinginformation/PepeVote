@@ -4,6 +4,7 @@ import json
 import math
 import requests
 import urllib.request
+from urllib.parse import quote_plus
 import bit
 from requests.auth import HTTPBasicAuth
 from bitcoin.signmessage import BitcoinMessage, VerifyMessage
@@ -483,7 +484,7 @@ def upload_file():
 def get_votes():
     print(request.args['address'])
 
-    address = request.args['address']
+    address = [request.args['address']]
 
     votes_cards = get_votes_cards(address)
     votes_cash  = get_votes_cash(address)
@@ -633,8 +634,10 @@ def vote():
 
     else:
         vote_string = ''
-        if 'vote_string' in request.form: vote_string = request.form['vote_string']
-        return render_template('submit_vote.html', vote_string=vote_string)
+        if 'vote_string' in request.form:
+            vote_string = request.form['vote_string']
+            vote_string_urlencoded = quote_plus(vote_string)
+        return render_template('submit_vote.html', vote_string=vote_string, vote_string_urlencoded=vote_string_urlencoded)
 
 
 @app.route('/create_vote', methods=['GET'])
@@ -646,7 +649,14 @@ def create_vote():
 def submit_vote():
     if request.method == 'GET':
         print(request.form)
-        return render_template('submit_vote.html')
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote.html', candidates=candidates, block_num=block)
 
     else:
         signature   = ''

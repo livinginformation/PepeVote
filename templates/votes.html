@@ -1,20 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="container">
-<br>
+<div class='flex-column align-items-center justify-content-center d-flex'>
+	<div class='nice-header'>Vote Power</div>
+	<br>
 
-Card votes: {{votes_cards}} / 1800000
+	<div class='alone-text'>Card votes: {{votes_cards}} / 1800000</div>
 
-<br>
-<br>
+	<br>
+	<br>
 
-Cash votes: {{votes_cash}} / 1000000
+	<div class='alone-text'>Cash votes: {{votes_cash}} / 1000000</div>
 
-<br>
-<br>
-<br>
-<form action="/">
-    <input type="submit" value="Return" />
-</form>
+	<br>
+	<br>
+	<br>
+	<form action="/">
+			<input class='btn btn-primary' type="submit" value="Return" />
+	</form>
 </div>
 {% endblock %}
