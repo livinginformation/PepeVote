@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+{% block body %}
+{{status}}
+<div class="container flex-column align-items-center justify-content-center d-flex">
+    <br>
+    <br>
+    <br>
+    {% if not registration_error and not hash %}
+    <b><div class='nice-header'>Making a submission</div></b>
+    <br>
+    <div class='container flex-column align-items-center justify-content-center d-flex'>
+        <div class='container flex-row align-items-center justify-content-center d-flex'>
+            <div class='container flex-column align-items-center justify-content-start d-flex'>
+                <img class='create_asset_icon' href="{{ url_for('static', filename='art_tools.jpg') }}"   src="{{ url_for('static', filename='art_tools.jpg') }}" alt="Card image cap">
+            </div>
+            <div class='container flex-column align-items-center justify-content-start d-flex'>
+                <img class='create_asset_icon' href="{{ url_for('static', filename='Counterparty.png') }}"   src="{{ url_for('static', filename='Counterparty.png') }}" alt="Card image cap">
+            </div>
+        </div>
+        <div class='container flex-row align-items-start justify-content-start d-flex'>
+            <div class='container flex-column align-items-center justify-content-start d-flex'>
+                <br>
+                <div class='alone-text'>1. Create digital art</div>
+                <br>
+            </div>
+            <div class='container flex-column align-items-center justify-content-start d-flex'>
+                <br>
+                <div class='alone-text center-text'>2. Create a Counterparty asset for your art</div>
+                <br>
+            </div>
+        </div>
+        <div class='container flex-row align-items-start justify-content-start d-flex'>
+            <div class='container flex-column align-items-center justify-content-center d-flex'>
+                <b>Requirements</b>
+                <ul>
+                    <li>Must be 400 pixels wide by 560 pixels tall</li>
+                    <li>Cannot have been submitted by someone else on a prior week</li>
+                    <li>Gif, png, and jpg files only. Currently considering svg</li>
+                    <li>Gifs have a maximum size of 4mb (currently not checked)</li>
+                </ul>
+            </div>
+            <div class='container flex-column align-items-center justify-content-center d-flex'>
+                <b>Requirements</b>
+                <ul>
+                    <li>Must be held by a single address, no pre-sales</li>
+                    <li>Cannot be divisible</li>
+                    <li>Must have an issuance between 100 and 10000 (subject to change)</li>
+                    <li>Issuance must be locked</li>
+                </ul>
+            </div>
+        </div>
+        <div class='container flex-column align-items-center justify-content-center d-flex'>
+
+           
+        </div>
+    </div>
+    <br>
+    <br>
+    <img class='create_asset_icon' href="{{ url_for('static', filename='upload.png') }}"   src="{{ url_for('static', filename='upload.png') }}" alt="Card image cap">
+    <div class='alone-text'>3. Upload your art and get its SHA256 hash here</div>
+    <br>
+    <br>
+        <form class="flex-column align-items-center justify-content-center d-flex" action="/upload" method="post" enctype="multipart/form-data" >
+            <span class="btn btn-default btn-file">
+                <input id="inp" type="file" name="image">
+            </span>
+            <br>
+            <br>
+            <input type="submit" value="Upload" class="btn btn-primary">
+        </form>
+        <form action="/create_submission">
+            <input class="btn btn-primary" type="submit" value="Restart Submission Process" />
+        </form>
+
+    <br>
+    <br>
+    {% if upload_error %}
+    Error: {{upload_error}}
+    {% endif %}
+
+    {% else %}
+    {% if not message and not registration_error %}
+        Your hash is: {{hash}}
+
+        <br>
+        <br>
+        <div class='alone-text'>4. Send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash. Use Counterwallet </div>
+        <br>
+        The amount of Pepecash to send changes from week to week.
+        <br>
+        Submission fee for the alpha: 1 Pepecash
+        <br>
+        <br>
+        <div class='alone-text'>5. Create a registration message </div>
+        <br>
+        <br>
+        <form action="/create_submission" method="POST">
+        Registering Address: <input type="text" name="address">
+        <br>
+        <br>
+        Asset name: <input type="text" name="asset">
+        <br>
+        <br>
+        Image hash: <input type="text" name="hash">
+        <br>
+        <br>
+        <input type="submit" value="Generate">
+        </form>
+        <br>
+        {% if message_error %}
+            Error: {{message_error}}
+        {% endif %}
+
+        {% else %}
+            {% if not success %}
+                {% if message %}
+                    Registration message: {{ message }}
+                    <br>
+                    <br>
+                {% endif %}
+                {% if registration_error %}
+                    Submission error: {{registration_error}}
+                    <br>
+                    <br>
+                {% endif %}
+                <div class='alone-text'>6. Use Counterwallet to sign the registration message hash with the address that burned the Pepecash.</div>
+                <br>
+                <br>
+                <div class='alone-text'>7. Submit the message and signature here:</div>
+                <br>
+                <form action="/submit_message" method="POST">
+                <input type="text" style="display:none;" name="message" value="{{ message }}" id="message" readonly="readonly">
+                <br>
+                <br>
+                Hash: <input type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
+                <br>
+                <br>
+                Signature: <input type="text" name="signature">
+                <br>
+                <br>
+                <input type="submit" value="Submit">
+                </form>
+            {% else %}
+                <br>
+                <div class='alone-text'>8. That's it, you're done!</div>
+                <br>
+                <br>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+        
+</div> <!--  closing contatiner div -->
+
+{% endblock %}
+
