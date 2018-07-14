@@ -92,7 +92,7 @@ def twisted(option, opt_str, value, parser):
     resource = WSGIResource(reactor, reactor.getThreadPool(), app)
     site = Site(resource)
 
-    reactor.listenSSL(getPort(5001), site,  sslContext)
+    reactor.listenSSL(getPort(443), site,  sslContext)
     reactor.listenTCP(getPort(value), site, interface="0.0.0.0")
     reactor.run()
 
