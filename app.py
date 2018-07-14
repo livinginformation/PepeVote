@@ -721,6 +721,30 @@ def vote():
         return render_template('submit_vote.html', vote_string=vote_string, vote_string_urlencoded=vote_string_urlencoded)
 
 
+@app.route('/vote_beta', methods=['GET', 'POST'])
+def vote_beta():
+    if request.method == 'GET':
+
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote_beta.html', candidates=candidates, block_num=block)
+
+    else:
+        vote_string = '{}'
+        if 'vote_string' in request.form:
+            vote_string = request.form['vote_string']
+
+        m = hashlib.sha256()
+        m.update(bytes(vote_string, encoding='utf-8'))
+        vote_string_hash = m.hexdigest()
+        return render_template('submit_vote_beta.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
+
+
 @app.route('/create_vote', methods=['GET'])
 def create_vote():
     return render_template('create_vote.html')
@@ -819,6 +843,101 @@ def submit_vote():
                 status = 'Vote submitted successfully.'
                 return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
+
+@app.route('/submit_vote_beta', methods=['GET', 'POST'])
+def submit_vote_beta():
+    if request.method == 'GET':
+        print(request.form)
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote_beta.html', candidates=candidates, block_num=block)
+
+    else:
+        signature   = ''
+        vote_string = ''
+
+        if 'signature' in request.form: signature = request.form['signature']
+        if 'vote_string' in request.form: vote_string = request.form['vote_string']
+
+        if vote_string == "" or signature == "":
+            status = 'Signature is missing.'
+            return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+
+        else:
+            # TODO: Change 'image hash' to 'hash' for terseness
+            # TODO: Change status to error for readability?
+
+            # First, check if all relevant fields have been provided to the signed message.
+            # If you don't do this, things die with malformed input.
+
+            try:
+                message_object = json.loads(vote_string)
+            except:
+                print("errored.")
+                status='message is not properly formatted JSON'
+                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+
+            try:
+                address   = message_object['address']
+                block     = message_object['block']
+                votes     = message_object['votes']
+
+            except:
+
+                if not 'address' in message_object:
+                    status = 'Address field is missing.'
+
+                if not 'votes' in message_object:
+                    status = 'Votes field is missing.'
+
+                if not 'block' in message_object:
+                    status = 'Block field is missing.'
+
+                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+
+            m = hashlib.sha256()
+            m.update(bytes(vote_string, encoding='utf-8'))
+            data = BitcoinMessage(m.hexdigest())
+            try:
+                verified = VerifyMessage(address, data, signature)
+
+            except:
+                status = 'Verification failed - signature is malformed.'
+                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+
+            if not verified:
+                status = 'Verification failed.'
+                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+
+            else:
+                entry = get_existing_vote(address)
+
+                if entry is not None:
+                    # Check block height to see if message is reused
+                    (_, old_block, _, _) = entry
+
+                    if block <= old_block:
+                        print("Reusing old message")
+                        status = 'Error: reused old vote'
+                        return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+
+                conn = sqlite3.connect('pepevote.db')
+                c = conn.cursor()
+
+                tuple = (address, block, str(votes), signature)
+                c.execute("INSERT OR REPLACE INTO votes(address, block, votes, signature) VALUES(?, ?, ?, ?)", tuple)
+                conn.commit()
+                conn.close()
+
+                print('Vote submitted successfully')
+
+                status = 'Vote submitted successfully.'
+                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
 
 
 @app.route('/submit_message', methods=['POST'])
