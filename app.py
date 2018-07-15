@@ -691,6 +691,10 @@ def create_vote():
     return render_template('create_vote.html')
 
 
+@app.route('/submit_overview', methods=['GET'])
+def submit_overview():
+    return render_template('submit_overview.html')
+
 @app.route('/submit_vote', methods=['GET', 'POST'])
 def submit_vote():
     if request.method == 'GET':
