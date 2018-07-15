@@ -864,9 +864,23 @@ def submit_vote_beta():
         if 'signature' in request.form: signature = request.form['signature']
         if 'vote_string' in request.form: vote_string = request.form['vote_string']
 
-        if vote_string == "" or signature == "":
+        if vote_string == "":
+            candidates = cache.get('candidates')
+            block = get_current_block()
+
+            if candidates is None:
+                print("Shouldn't be here")
+                candidates = update_scores()
+
+            return render_template('vote_beta.html', candidates=candidates, block_num=block)
+
+
+        m = hashlib.sha256()
+        m.update(bytes(vote_string, encoding='utf-8'))
+
+        if  signature == "":
             status = 'Signature is missing.'
-            return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+            return render_template('submit_vote_beta.html', vote_string=vote_string, vote_string_hash=m.hexdigest(), status=status)
 
         else:
             # TODO: Change 'image hash' to 'hash' for terseness
@@ -880,7 +894,7 @@ def submit_vote_beta():
             except:
                 print("errored.")
                 status='Message is not properly formatted JSON'
-                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+                return render_template('submit_vote_beta.html', vote_string=vote_string, vote_string_hash=m.hexdigest(), status=status) # Make this a redirect to vote?
 
             try:
                 address   = message_object['address']
@@ -898,21 +912,19 @@ def submit_vote_beta():
                 if not 'block' in message_object:
                     status = 'Block field is missing.'
 
-                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
+                return render_template('submit_vote_beta.html', vote_string=vote_string, status=status) # redirect to vote
 
-            m = hashlib.sha256()
-            m.update(bytes(vote_string, encoding='utf-8'))
             data = BitcoinMessage(m.hexdigest())
             try:
                 verified = VerifyMessage(address, data, signature)
 
             except:
                 status = 'Verification failed - signature is malformed.'
-                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
 
             if not verified:
                 status = 'Verification failed.'
-                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+                return render_template('submit_vote_beta.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
 
             else:
                 entry = get_existing_vote(address)
@@ -924,7 +936,7 @@ def submit_vote_beta():
                     if block <= old_block:
                         print("Reusing old message")
                         status = 'Error: reused old vote'
-                        return render_template('submit_vote_beta.html', status=status, vote_string=vote_string)
+                        return render_template('submit_vote_beta.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
 
                 conn = sqlite3.connect('pepevote.db')
                 c = conn.cursor()
@@ -1088,7 +1100,7 @@ def submit_message_beta():
             message_object = json.loads(message)
         except:
             print("errored.")
-            registration_error='message is not properly formatted JSON'
+            registration_error='Message is not properly formatted JSON'
             return render_template('create_submission_beta.html', registration_error=registration_error)
 
         try:
