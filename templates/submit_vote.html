@@ -6,12 +6,13 @@
     <div class='submit-holder flex-row justify-content-between d-flex'>
         <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
             <br>
-            <form class='center-text flex-column align-items-center justify-content-center d-flex' action="/submit_vote" method="POST">
-                Copy the following message, and sign it with Counterwallet:
+            <form class='center-text flex-column align-items-center justify-content-center d-flex' action="/submit_vote_beta" method="POST">
+                Copy the following message hash, and sign it with Counterwallet:
                 <br>
                 <br>
-                <input type="text" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
-                <button type="button" class="btn" data-clipboard-target="#message">
+                <input type="text" style="display:none;" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
+                <input type="text" name="vote_string_hash" value="{{ vote_string_hash }}" id="vote_string_hash" readonly="readonly">
+                <button type="button" class="btn" data-clipboard-target="#vote_string_hash">
                     <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
                 </button>
                 <br>
@@ -30,7 +31,7 @@
         <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
             <button id='pepe-sign' class='btn btn-primary' type="button" id="submitbroken">Sign With RarePepeWallet (currently broken)</button>
             <iframe id='pepe-frame' frameborder='0' noresize='noresize' style='display:none; position: absolute; background: transparent; width:400px; height:400px;' 
-                src="https://rarepepewallet.com/?who=pepevote&msg={{ vote_string_urlencoded }}&return=https://107.155.93.86:5001/rpwverify" frameborder="0">
+                src="https://rarepepewallet.com/?who=pepevote&msg={{ vote_string_hash }}&return=https://pepevote.com/rpwverify" frameborder="0">
             </iframe>
         </div>
     </div>
