@@ -82,9 +82,20 @@
         <form action="/create_submission" method="POST">    
             <br>
             <br>
-            <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to send 1 Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your image's hash.</div>
             <br>
-            <div>Image Hash: <input class="form-control" type="text" name="hash" value="{{ hash }}" id="hash" readonly="readonly"></div>
+            <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to send this week's submission fee to the burn address. Attach a data memo of your image's hash.</div>
+            <br>
+            <div class='alone-text'>Submission Fee: 1 Pepecash</div>
+            <br>
+            <div>Burn Address: <input class="form-control" type="text" name="burn_address" value="1BurnPepexxxxxxxxxxxxxxxxxxxAK33R" id="burn_address" readonly="readonly">
+            <button type="button" class="btn" data-clipboard-target="#burn_address">
+                <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+            </button>
+            </div>
+            <div>Image Hash: <input class="form-control" type="text" name="hash" value="{{ hash }}" id="hash" readonly="readonly">
+            <button type="button" class="btn" data-clipboard-target="#hash">
+                <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+            </button></div>
             <br>
             <br>
             <div>Registering Address: <input class="form-control" type="text" name="address"></div>
@@ -139,3 +150,14 @@
 
 {% endblock %}
 
+{% block script %}
+    <script>
+    var clipboard = new ClipboardJS('.btn');
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+    </script>
+{% endblock %}
