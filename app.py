@@ -843,7 +843,7 @@ def submit_message():
 
             if not 'image_hash' in message_object:
                 registration_error = 'Hash field is missing.'
-                return render_template('create_submission.html', registration_error=registration_error, message=message, msghash=m.hexdigest(), msghash=m.hexdigest())
+                return render_template('create_submission.html', registration_error=registration_error, message=message, msghash=m.hexdigest())
 
             if not 'block' in message_object:
                 registration_error = 'Block field is missing.'
