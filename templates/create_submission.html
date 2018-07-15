@@ -60,7 +60,7 @@
     <div class='alone-text'>3. Upload your art and get its SHA256 hash here</div>
     <br>
     <br>
-        <form class="flex-column align-items-center justify-content-center d-flex" action="/upload_beta" method="post" enctype="multipart/form-data" >
+        <form class="flex-column align-items-center justify-content-center d-flex" action="/upload" method="post" enctype="multipart/form-data" >
             <span class="btn btn-default btn-file">
                 <input id="inp" type="file" name="image">
             </span>
@@ -68,7 +68,7 @@
             <br>
             <input type="submit" value="Upload" class="btn btn-primary">
         </form>
-        <form action="/create_submission_beta">
+        <form action="/create_submission">
             <input class="btn btn-primary" type="submit" value="Restart Submission Process" />
         </form>
 
@@ -80,7 +80,7 @@
 
     {% else %}
     {% if not message and not registration_error %}
-        <form action="/create_submission_beta" method="POST">    
+        <form action="/create_submission" method="POST">    
             <br>
             <br>
             Use Counterwallet to send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash.
@@ -117,7 +117,7 @@
                     <br>
                     <br>
                 {% endif %}
-                <form action="/submit_message_beta" method="POST">
+                <form action="/submit_message" method="POST">
                     <input type="text" style="display:none;" name="message" value="{{ message }}" id="message" readonly="readonly">
                     Use Counterwallet to sign the registration message hash with the address that burned the Pepecash.
                     <br>

@@ -488,7 +488,7 @@ def vote_list():
     return render_template('vote_list.html')
 
 
-@app.route('/upload_beta', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
     hash = 0
     if 'image' not in request.files:
