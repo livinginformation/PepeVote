@@ -854,21 +854,21 @@ def submit_message():
 
         if not verified:
             registration_error = 'Signature verification failed.'
-            return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash)
+            return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash, msghash=m.hexdigest())
 
         else:
             entry = get_existing_verified_message(hash,asset)
 
             if entry:
                 registration_error = 'This asset or image has already been submitted this week.'
-                return render_template('create_submission.html', registration_error=registration_error,hash=hash,message=message)
+                return render_template('create_submission.html', registration_error=registration_error,hash=hash,message=message, msghash=m.hexdigest())
 
             else: # Entry is not a duplicate
 
                 # Check if address actually owns the asset in question
                 if not owns_asset(address, asset):
                     registration_error = 'The provided address does not have the provided asset.'
-                    return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message)
+                    return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message, msghash=m.hexdigest())
 
                 # Check if the burn fee is paid
                 paid = False
@@ -883,7 +883,7 @@ def submit_message():
 
                 if not paid:
                     registration_error = 'Burn fee has not been paid.'
-                    return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash)
+                    return render_template('create_submission.html', registration_error=registration_error,message=message,hash=hash, msghash=m.hexdigest())
 
                 # TODO: Check if the asset is a duplicate of an existing one
 
@@ -910,7 +910,7 @@ def submit_message():
 
                 if not match:
                     registration_error = 'No uploaded image has the provided hash.'
-                    return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message)
+                    return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message, msghash=m.hexdigest())
 
                 location = os.path.join('static', 'submitted', submission_path[8:])
                 os.rename(submission_path, location)
@@ -927,7 +927,7 @@ def submit_message():
 
 
     try:
-        return render_template('create_submission.html', success=success,hash=hash,message=message)
+        return render_template('create_submission.html', success=success,hash=hash,message=message, msghash=m.hexdigest())
     except:
         return render_template('create_submission.html')
 
