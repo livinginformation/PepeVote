@@ -25,7 +25,7 @@
             </div>
             <div class='container flex-column align-items-center justify-content-start d-flex'>
                 <br>
-                <div class='alone-text center-text'>2. Create a Counterparty asset for your art</div>
+                <div class='alone-text center-text'>2. Create a <a href='https://wallet.counterwallet.io/'>Counterparty</a> asset for your art</div>
                 <br>
             </div>
         </div>
@@ -57,7 +57,7 @@
     <br>
     <br>
     <img class='create_asset_icon' href="{{ url_for('static', filename='upload.png') }}"   src="{{ url_for('static', filename='upload.png') }}" alt="Card image cap">
-    <div class='alone-text'>3. Upload your art and get its SHA256 hash here</div>
+    <div class='alone-text'>3. Upload your art and get its unique ID(Hash)</div>
     <br>
     <br>
         <form class="flex-column align-items-center justify-content-center d-flex" action="/upload" method="post" enctype="multipart/form-data" >
@@ -68,9 +68,6 @@
             <br>
             <input type="submit" value="Upload" class="btn btn-primary">
         </form>
-        <form action="/create_submission">
-            <input class="btn btn-primary" type="submit" value="Restart Submission Process" />
-        </form>
 
     <br>
     <br>
@@ -79,27 +76,26 @@
     {% endif %}
 
     {% else %}
-    {% if not message and not registration_error %}
+		{% if not message and not registration_error %}
+			<div class='container flex-column align-items-center justify-content-center d-flex'>
+				<div class='nice-header'>Submit Image to the Blockchain</div>
         <form action="/create_submission" method="POST">    
             <br>
             <br>
-            Use Counterwallet to send some Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your hash.
+            <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to send 1 Pepecash to 1BurnPepexxxxxxxxxxxxxxxxxxxAK33R, with a data memo of your image's hash.</div>
             <br>
-            The amount of Pepecash to send changes from week to week.
-            <br>
-            Current Submission Fee: 1 Pepecash 
-            <br>
-            Hash: <input type="text" name="hash" value="{{ hash }}" id="hash" readonly="readonly">
+            <div>Image Hash: <input class="form-control" type="text" name="hash" value="{{ hash }}" id="hash" readonly="readonly"></div>
             <br>
             <br>
-            Registering Address: <input type="text" name="address">
+            <div>Registering Address: <input class="form-control" type="text" name="address"></div>
             <br>
             <br>
-            Asset name: <input type="text" name="asset">
+            <div>Asset name: <input class="form-control" type="text" name="asset"></div>
             <br>
             <br>
-            <input type="submit" value="Generate">
-        </form>
+            <input class="btn btn-primary" type="submit" value="Submit">
+				</form>
+			</div>
         <br>
         {% if message_error %}
             Error: {{message_error}}
@@ -107,27 +103,28 @@
 
         {% else %}
             {% if not success %}
-                {% if message %}
-                    Registration message: {{ message }}
+								{% if message %}
+										<div class='nice-header'>Sign the submission</div>
+                    <div style='display:none;'>Registration message: {{ message }}</div>
                     <br>
                     <br>
                 {% endif %}
                 {% if registration_error %}
-                    Submission error: {{registration_error}}
+                    <div class='alone-text'>Submission error: {{registration_error}}</div>
                     <br>
                     <br>
                 {% endif %}
                 <form action="/submit_message" method="POST">
                     <input type="text" style="display:none;" name="message" value="{{ message }}" id="message" readonly="readonly">
-                    Use Counterwallet to sign the registration message hash with the address that burned the Pepecash.
+                    <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to sign the registration message hash with the address that burned the Pepecash.</div>
                     <br>
-                    Hash: <input type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
-                    <br>
-                    <br>
-                    Signature: <input type="text" name="signature">
+                    Hash: <input class="form-control" type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
                     <br>
                     <br>
-                    <input type="submit" value="Submit Signature">
+                    Signature: <input class="form-control" type="text" name="signature">
+                    <br>
+                    <br>
+                    <input class="btn btn-primary" type="submit" value="Submit Signature">
                 </form>
             {% else %}
                 <br>
