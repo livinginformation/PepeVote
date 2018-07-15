@@ -879,7 +879,7 @@ def submit_vote_beta():
                 message_object = json.loads(vote_string)
             except:
                 print("errored.")
-                status='message is not properly formatted JSON'
+                status='Message is not properly formatted JSON'
                 return render_template('submit_vote_beta.html', vote_string=vote_string, status=status)
 
             try:
