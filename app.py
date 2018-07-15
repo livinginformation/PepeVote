@@ -807,9 +807,16 @@ def submit_message():
     if 'message'   in request.form: message   = request.form['message']
     if 'signature' in request.form: signature = request.form['signature']
 
-    if message == "" or signature == "":
-        registration_error = 'Message/Signature is missing'
+    if message == "":
+        registration_error = 'Message is missing'
         return render_template('create_submission.html', registration_error=registration_error)
+
+    m = hashlib.sha256()
+    m.update(bytes(message, encoding='utf-8'))
+
+    if signature == "":
+        registration_error = 'Signature is missing'
+        return render_template('create_submission.html', registration_error=registration_error, msghash=m.hexdigest())
 
     else:
 
@@ -818,7 +825,7 @@ def submit_message():
         except:
             print("errored.")
             registration_error='Message is not properly formatted JSON'
-            return render_template('create_submission.html', registration_error=registration_error)
+            return render_template('create_submission.html', registration_error=registration_error, msghash=m.hexdigest())
 
         try:
             address = message_object['address']
@@ -836,15 +843,13 @@ def submit_message():
 
             if not 'image_hash' in message_object:
                 registration_error = 'Hash field is missing.'
-                return render_template('create_submission.html', registration_error=registration_error, message=message)
+                return render_template('create_submission.html', registration_error=registration_error, message=message, msghash=m.hexdigest(), msghash=m.hexdigest())
 
             if not 'block' in message_object:
                 registration_error = 'Block field is missing.'
 
-            return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message)
+            return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message, msghash=m.hexdigest())
 
-        m = hashlib.sha256()
-        m.update(bytes(message, encoding='utf-8'))
         data = BitcoinMessage(m.hexdigest())
  
         try: 
