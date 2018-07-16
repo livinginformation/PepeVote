@@ -11,7 +11,8 @@
 							Put the message from the previous page and the signature from counterwallet here.
 							<br>
                 <br>
-								<input type="text" name="delegate_string" value="{{ delegate_string }}" id="delegate_string" readonly="readonly">
+								<input type="text" style="display:none;" name="delegate_string" value="{{ delegate_string }}" id="delegate_string" readonly="readonly">
+                                <input type="text" name="delegate_string_hash" value="{{ delegate_string }}" id="delegate_string_hash" readonly="readonly">
 								<button type="button" class="btn" data-clipboard-target="#delegate_string">
 										<img src="static/clippy.svg" alt="Copy to clipboard" width="13">
 								</button>

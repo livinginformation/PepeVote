@@ -35,7 +35,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS verified_messages
 c.execute('''CREATE TABLE IF NOT EXISTS votes
              (address text PRIMARY KEY, block text, votes text, signature text)''')
 c.execute('''CREATE TABLE IF NOT EXISTS delegates
-             (source text PRIMARY KEY, delegate text)''')
+             (source text PRIMARY KEY, delegate text, signature text)''')
 
 conn.commit()
 conn.close()
@@ -343,7 +343,7 @@ def update_scores():
     delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
     delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
 
-    for (delegated, delegate) in delegates: 
+    for (delegated, delegate, _) in delegates: 
         delegate_mapping[delegate].append(delegated)
         delegated_mapping[delegated] = delegate
 
@@ -379,12 +379,12 @@ def update_scores():
     return candidates
 
 
-def insert_into_delegates(source, delegate):
-    tuple = (source, delegate)
+def insert_into_delegates(source, delegate, signature):
+    tuple = (source, delegate, signature)
     conn = sqlite3.connect('pepevote.db')
     c = conn.cursor()
 
-    c.execute("INSERT OR REPLACE INTO delegates(source, delegate) VALUES(?,?)", tuple)
+    c.execute("INSERT OR REPLACE INTO delegates(source, delegate, signature) VALUES(?,?,?)", tuple)
     conn.commit()
     conn.close()
 
@@ -603,8 +603,10 @@ def delegate_votes():
 
     delegate_string = ''
     if 'delegate_string' in request.form: delegate_string = request.form['delegate_string']
+    m = hashlib.sha256()
+    m.update(bytes(delegate_string, encoding='utf-8'))
 
-    return render_template('delegate_submit.html', delegate_string=delegate_string)
+    return render_template('delegate_submit.html', delegate_string=delegate_string, delegate_string_hash=m.hexdigest())
 
 
 @app.route('/delegate_submit', methods=['GET', 'POST'])
@@ -654,7 +656,7 @@ def delegate_submit():
         status = 'Verification failed.'
         return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
-    insert_into_delegates(source, delegate)
+    insert_into_delegates(source, delegate, signature)
 
     print('Delegation processed successfully.')
 
