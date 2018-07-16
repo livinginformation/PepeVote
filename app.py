@@ -646,9 +646,11 @@ def delegate_submit():
         return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
     data = BitcoinMessage(delegate_string)
+    m = hashlib.sha256()
+    m.update(bytes(data, encoding='utf-8'))
 
     try:
-        verified = VerifyMessage(source, data, signature)
+        verified = VerifyMessage(source, m.hexdigest(), signature)
     except:
         verified = False
 
