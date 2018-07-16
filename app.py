@@ -800,6 +800,7 @@ def submit_vote():
                 print('Vote submitted successfully')
 
                 status = 'Vote submitted successfully.'
+                update_scores()
                 return render_template('submit_vote.html', vote_string=vote_string, status=status)
 
 

@@ -110,8 +110,6 @@
 						</div>
 						<br>
             <br>
-            <div class='alone-text'>Once your submission fee has been paid, fill in the registering address and asset name.</div>
-            <br>
             <br>
             <div>Your Address: <input class="form-control" type="text" name="address"></div>
             <br>
@@ -129,22 +127,34 @@
 
         {% else %}
             {% if not success %}
-								{% if message %}
-										<div class='nice-header'>Sign the submission</div>
-                    <div style='display:none;'>Registration message: {{ message }}</div>
+	        {% if message %}
+			<div class='nice-header'>Sign the submission</div>
+                        <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to sign the registration message hash with the address that burned the Pepecash.</div>
+
+	                <div style='display:none;'>Registration message: {{ message }}</div>
+	                <div class='align-items-center justify-content-center d-flex'>						
+		        <img style='height: 30rem;' src='static/signature.jpg'>						
+			<img style='height: 30rem;' src='static/select_signature.jpg'>
+			</div>
                     <br>
                     <br>
                 {% endif %}
                 {% if registration_error %}
                     <div class='alone-text'>Submission error: {{registration_error}}</div>
                     <br>
-                    <br>
+79785aa71e17afd5d                    <br>
                 {% endif %}
                 <form action="/submit_message" method="POST">
                     <input type="text" style="display:none;" name="message" value="{{ message }}" id="message" readonly="readonly">
-                    <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to sign the registration message hash with the address that burned the Pepecash.</div>
                     <br>
-                    Hash: <input class="form-control" type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
+                    Hash:
+                    <br>
+                    <div class="d-flex">
+                    <input class="form-control" type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
+	       	    <button type="button" class="btn" data-clipboard-target="#msghash">
+    		    <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+							</button>
+                    </div>
                     <br>
                     <br>
                     Signature: <input class="form-control" type="text" name="signature">
