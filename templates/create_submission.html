@@ -85,7 +85,7 @@
             <br>
             <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to send this week's submission fee to the burn address. Attach a data memo of your image's hash.</div>
             <br>
-            <div class='alone-text'>Submission Fee: 1 Pepecash</div>
+            <div class='alone-text'>Submission Fee: 300 Pepecash</div>
 						<br>
 						Burn Address:
             <div class='d-flex'>
@@ -128,16 +128,23 @@
         {% else %}
             {% if not success %}
 	        {% if message %}
-			<div class='nice-header'>Sign the submission</div>
-                        <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to sign the registration message hash with the address that burned the Pepecash.</div>
+									<div class='nice-header'>Sign the submission</div>
+                  <div class='alone-text'>Use <a href='https://wallet.counterwallet.io/'>Counterwallet</a> to sign the registration message hash with the address that burned the Pepecash.</div>
 
-	                <div style='display:none;'>Registration message: {{ message }}</div>
-	                <div class='align-items-center justify-content-center d-flex'>						
-		        <img style='height: 30rem;' src='static/signature.jpg'>						
-			<img style='height: 30rem;' src='static/select_signature.jpg'>
-			</div>
+									<div style='display:none;'>Registration message: {{ message }}</div>
+									<br>
+									<br>
+	                <div class='flex-column align-items-center justify-content-center d-flex'>		
+										<div class='alone-text'>1. Select sign message</div>				
+										<img style='height: 30rem;' src='static/signature.jpg'>						
+										<br>
+										<br>
+										<div class='alone-text'>2. Sign message</div>				
+										<img style='height: 30rem;' src='static/select_signature.jpg'>
+									</div>
                     <br>
-                    <br>
+										<br>
+										<div class='alone-text'>3. Submit signed message below</div>				
                 {% endif %}
                 {% if registration_error %}
                     <div class='alone-text'>Submission error: {{registration_error}}</div>
@@ -149,11 +156,11 @@
                     <br>
                     Hash:
                     <br>
-                    <div class="d-flex">
-                    <input class="form-control" type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
-	       	    <button type="button" class="btn" data-clipboard-target="#msghash">
-    		    <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
-							</button>
+                    <div style='width:50rem;' class="d-flex">
+											<input class="form-control" type="text" name="msghash" value="{{ msghash }}" id="msghash" readonly="readonly">
+											<button type="button" class="btn" data-clipboard-target="#msghash">
+												<img src="static/clippy.svg" alt="Copy to clipboard" width="13">
+											</button>
                     </div>
                     <br>
                     <br>

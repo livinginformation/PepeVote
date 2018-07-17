@@ -200,7 +200,7 @@ def get_candidates(start, end):
                "params": {
                           "filters": [{"field": "destination" , "op": "==", "value": burn_addy},
                                       {"field": "asset"   , "op": "==", "value": "PEPECASH"},
-                                      {"field": "quantity", "op": ">=" , "value": "1"}
+                                      {"field": "quantity", "op": ">=" , "value": "300"}
                                       ],
                           "start_block": start,
                           "end_block": end
@@ -887,7 +887,7 @@ def submit_message():
                 # Check if the burn fee is paid
                 paid = False
 
-                candidates = get_candidates(512000,520000)
+                candidates = get_candidates(532129,550000)
 
                 for candidate in candidates:
                     if hash == candidate:
