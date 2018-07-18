@@ -13,3 +13,12 @@
     </div>
 </div>
 {% endblock %}
+{% block script %}
+    <script>
+    $(document).ready(function(){
+        $('#pepe-sign').click(function() {
+            $('#pepe-frame').css('display', 'flex');
+        })
+    });
+    </script>
+{% endblock %}
