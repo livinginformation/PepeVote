@@ -763,6 +763,7 @@ def vote_rpw():
         return render_template('vote_rpw.html', candidates=candidates, block_num=block)
 
     else:
+
         vote_string = '{}'
         if 'vote_string' in request.form:
             vote_string = request.form['vote_string']
@@ -770,6 +771,7 @@ def vote_rpw():
         m = hashlib.sha256()
         m.update(bytes(vote_string, encoding='utf-8'))
         vote_string_hash = m.hexdigest()
+        cache.set(m.hexdigest(), vote_string, timeout=300)
         return render_template('submit_vote_rpw.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
 
 
