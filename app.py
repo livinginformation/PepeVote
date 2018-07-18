@@ -9,7 +9,7 @@ import bit
 from requests.auth import HTTPBasicAuth
 from bitcoin.signmessage import BitcoinMessage, VerifyMessage
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import sys
 import hashlib
 import sqlite3
@@ -484,8 +484,61 @@ def ajaxtest():
 
 @app.route('/rpwverify')
 def rpwverify():
+    failure = json.dumps({'success':False, 'status': 'Something went wrong.'}), 200, {'ContentType':'application/json'}
+    success = json.dumps({'success':True, 'status': 'Your vote has been cast.'}), 200, {'ContentType':'application/json'}
+
     print(request)
-    return json.dumps({'success':True, 'status': 'Please display this message.'}), 200, {'ContentType':'application/json'} 
+    try: 
+        address = request.args['address']
+        signature = request.args['signature']
+        hash = request.args['msg']
+
+        vote_string = cache.get(hash)
+        print(vote_string)
+
+        message_object = json.loads(vote_string)
+
+        block     = message_object['block']
+        votes     = message_object['votes']
+
+        m = hashlib.sha256()
+        m.update(vote_string)
+
+        if m.hexdigest() != hash:
+            print("Something is very wrong")
+            print("Hash", hash, "hexdigest", m.hexdigest())
+            return failure
+
+        data = BitcoinMessage(hash)
+        verified = VerifyMessage(address, data, signature)
+
+        if not verified:
+            return failure
+
+        entry = get_existing_vote(address)
+
+        if entry is not None:
+            # Check block height to see if message is reused
+            (_, old_block, _, _) = entry
+
+            if block <= old_block:
+                return failure
+
+        conn = sqlite3.connect('pepevote.db')
+        c = conn.cursor()
+
+        tuple = (address, block, str(votes), signature)
+        c.execute("INSERT OR REPLACE INTO votes(address, block, votes, signature) VALUES(?, ?, ?, ?)", tuple)
+        conn.commit()
+        conn.close()
+
+        print('Vote submitted successfully.')
+
+        update_scores()
+        return success
+
+    except:
+        return failure 
 
 
 @app.route('/vote_list')
@@ -695,14 +748,34 @@ def vote():
         return render_template('submit_vote.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
 
 
-@app.route('/create_vote', methods=['GET'])
-def create_vote():
-    return render_template('create_vote.html')
+@app.route('/vote_rpw', methods=['GET', 'POST'])
+def vote_rpw():
+    if request.method == 'GET':
+
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote_rpw.html', candidates=candidates, block_num=block)
+
+    else:
+        vote_string = '{}'
+        if 'vote_string' in request.form:
+            vote_string = request.form['vote_string']
+
+        m = hashlib.sha256()
+        m.update(bytes(vote_string, encoding='utf-8'))
+        vote_string_hash = m.hexdigest()
+        return render_template('submit_vote_rpw.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
 
 
 @app.route('/submit_overview', methods=['GET'])
 def submit_overview():
     return render_template('submit_overview.html')
+
 
 @app.route('/submit_vote', methods=['GET', 'POST'])
 def submit_vote():
@@ -811,6 +884,24 @@ def submit_vote():
                 status = 'Vote submitted successfully.'
                 update_scores()
                 return render_template('submit_vote.html', vote_string=vote_string, status=status)
+
+
+@app.route('/submit_vote_rpw', methods=['GET', 'POST'])
+def submit_vote_rpw():
+    if request.method == 'GET':
+        return redirect('/vote_rpw')
+
+    else:
+        vote_string = ''
+
+        if 'vote_string' in request.form: vote_string = request.form['vote_string']
+
+        if vote_string == "":
+            return redirect('/vote_rpw')
+
+        m = hashlib.sha256()
+        m.update(bytes(vote_string, encoding='utf-8'))
+        cache.set(m.hexdigest(), vote_string, timeout=300)
 
 
 @app.route('/submit_message', methods=['POST'])
