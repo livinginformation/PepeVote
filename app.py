@@ -4,7 +4,7 @@ import json
 import math
 import requests
 import urllib.request
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, unquote_plus
 import bit
 from requests.auth import HTTPBasicAuth
 from bitcoin.signmessage import BitcoinMessage, VerifyMessage
@@ -21,6 +21,7 @@ from PIL import Image
 from collections import defaultdict
 from werkzeug.contrib.cache import SimpleCache
 from apscheduler.schedulers.background import BackgroundScheduler
+
 
 
 scheduler = BackgroundScheduler()
@@ -490,7 +491,7 @@ def rpwverify():
     print(request)
     try: 
         address = request.args['address']
-        signature = request.args['signature']
+        signature = unquote_plus(request.args['signature'])
         hash = request.args['msg']
 
         vote_string = cache.get(hash)
