@@ -508,12 +508,14 @@ def rpwverify():
         if m.hexdigest() != hash:
             print("Something is very wrong")
             print("Hash", hash, "hexdigest", m.hexdigest())
+            print('-------------000')
             return failure
 
         data = BitcoinMessage(hash)
         verified = VerifyMessage(address, data, signature)
 
         if not verified:
+            print('-------------111')
             return failure
 
         entry = get_existing_vote(address)
@@ -523,6 +525,7 @@ def rpwverify():
             (_, old_block, _, _) = entry
 
             if block <= old_block:
+                print('-------------222')
                 return failure
 
         conn = sqlite3.connect('pepevote.db')
@@ -539,6 +542,7 @@ def rpwverify():
         return success
 
     except:
+        print('-------------333')
         return failure 
 
 
