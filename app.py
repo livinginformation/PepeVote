@@ -289,12 +289,16 @@ def get_submissions_data():
 
     scores = {}
     files = []
+    hashes = []
 
     conn = sqlite3.connect('pepevote.db')
     c = conn.cursor()
 
     for submission in submissions:
         hash = sha256_checksum(os.path.join(dir,submission))
+        if hash in hashes:
+            continue
+        hashes.append(hash)
         c.execute('SELECT * FROM verified_messages WHERE hash=?', (hash,))
         data = c.fetchone() # Hash is a unique constraint, will never be multiple
         if data is not None:
@@ -303,6 +307,7 @@ def get_submissions_data():
             scores[asset]['cash_score'] = 0
             scores[asset]['card_score'] = 0
             files.append((os.path.join(dir, submission), asset, hash))
+
     conn.close()
     return (files, scores)
 
