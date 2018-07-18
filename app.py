@@ -4,7 +4,7 @@ import json
 import math
 import requests
 import urllib.request
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote_plus, unquote
 import bit
 from requests.auth import HTTPBasicAuth
 from bitcoin.signmessage import BitcoinMessage, VerifyMessage
@@ -489,33 +489,30 @@ def rpwverify():
     success = json.dumps({'success':True, 'status': 'Your vote has been cast.'}), 200, {'ContentType':'application/json'}
 
     print(request)
-    try: 
+    try:
         address = request.args['address']
-        signature = unquote_plus(request.args['signature'])
+        signature = unquote(request.args['signature'])
         hash = request.args['msg']
 
         vote_string = cache.get(hash)
         print(vote_string)
 
         message_object = json.loads(vote_string)
-
         block     = message_object['block']
         votes     = message_object['votes']
 
         m = hashlib.sha256()
-        m.update(vote_string)
-
+        m.update(bytes(vote_string, encoding='utf-8'))
         if m.hexdigest() != hash:
             print("Something is very wrong")
             print("Hash", hash, "hexdigest", m.hexdigest())
-            print('-------------000')
             return failure
 
         data = BitcoinMessage(hash)
         verified = VerifyMessage(address, data, signature)
 
         if not verified:
-            print('-------------111')
+            print('Fail due to unverified message')
             return failure
 
         entry = get_existing_vote(address)
@@ -525,12 +522,11 @@ def rpwverify():
             (_, old_block, _, _) = entry
 
             if block <= old_block:
-                print('-------------222')
+                print('Fail due to block number')
                 return failure
 
         conn = sqlite3.connect('pepevote.db')
         c = conn.cursor()
-
         tuple = (address, block, str(votes), signature)
         c.execute("INSERT OR REPLACE INTO votes(address, block, votes, signature) VALUES(?, ?, ?, ?)", tuple)
         conn.commit()
@@ -542,8 +538,8 @@ def rpwverify():
         return success
 
     except:
-        print('-------------333')
-        return failure 
+        print('Some fail I havent identified')
+        return failure
 
 
 @app.route('/vote_list')
