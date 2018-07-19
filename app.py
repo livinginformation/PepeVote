@@ -729,6 +729,11 @@ def delegate_submit():
     return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
 
+@app.route('/vote_overview', methods=['GET'])
+def vote_overview():
+    return render_template('vote_overview.html')
+
+
 @app.route('/vote', methods=['GET', 'POST'])
 def vote():
     if request.method == 'GET':
