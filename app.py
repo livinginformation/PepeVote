@@ -980,6 +980,8 @@ def submit_message():
 
                 # Check if address actually owns the asset in question
                 if not owns_asset(address, asset):
+                    print(address)
+                    print(asset)
                     registration_error = 'The provided address does not have the provided asset.'
                     return render_template('create_submission.html', registration_error=registration_error, hash=hash, message=message, msghash=m.hexdigest())
 

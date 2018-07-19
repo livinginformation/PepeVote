@@ -9,7 +9,8 @@
   <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
   <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='image-picker.css') }}">
   <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='bootstrap-slider.css') }}">
-  <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="bower_components/jquery.gifplayer/dist/gifplayer.css">
   {% block head %}
   {% endblock %}
 </head>
@@ -61,12 +62,16 @@
 {% endblock %}
 </footer>
   <!-- you can optionally (perhaps preferably) load these scripts locally. Get them here: https://getbootstrap.com/docs/4.0/getting-started/introduction/ -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='image-picker.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='bootstrap-slider.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+	<script type="text/javascript" src="bower_components/jquery.gifplayer/dist/jquery.gifplayer.js"></script>
 
 {% block script %}
 {% endblock %}
