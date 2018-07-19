@@ -62,8 +62,8 @@ my_addy   = "18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo"
 home_dir = os.path.expanduser("~")
 
 sslContext = ssl.DefaultOpenSSLContextFactory(
-    os.path.join(home_dir, '.ssl/privkey.pem'),
-    os.path.join(home_dir, '.ssl/cacert.pem'),
+    '/etc/letsencrypt/live/pepevote.com/privkey.pem',
+    '/etc/letsencrypt/live/pepevote.com/fullchain.pem',
 )
 __port = 701
 
