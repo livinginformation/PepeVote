@@ -8,7 +8,7 @@
     {{status}}
   </div>
 	<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-        {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+        {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
         <div class='submission flex-column align-items-center justify-content-center d-flex'>
             <div class='center-text alone-text'>{{asset}}</div>
             <div class='center-text'><b>{{issuance}} Created</b></div>
@@ -66,12 +66,12 @@
     }
 
     $(document).ready(function(){
-      {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %} 
+      {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %} 
         jQuery("#{{ asset }}slider").slider({});
       {% endfor %}
 
       function updateSliders() {
-        {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+        {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
           val = jQuery("#{{ asset }}number").val()
           if (val > 100) {
             jQuery("#{{ asset }}number").val(100)
@@ -84,13 +84,13 @@
   
       function updateValues() {
         thing = this
-        {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+        {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
           val = jQuery("#{{ asset }}slider").slider("option", "value").val();
           jQuery("#{{ asset }}number").val(val);
         {% endfor %}
       }
 
-      {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+      {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
         $(document).on("slide, change", "#{{ asset }}slider", updateValues);
         $(document).on("change, keyup", "#{{ asset }}number", updateSliders);
       {% endfor %}
@@ -100,7 +100,7 @@
         address = $("#address").val()
         vote_string =  '{"block":"' + block + '",'
         vote_string += '"votes":['
-        {% for (asset, hash, candidate, issuance, card_score, cash_score) in candidates %}
+        {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
           val = jQuery("#{{ asset }}slider").slider("option", "value").val();
           if (val != "0") {
             vote_string += '{"asset":"{{ asset }}",'

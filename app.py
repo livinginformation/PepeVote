@@ -376,9 +376,13 @@ def update_scores():
 
 
     for file in files:
+        is_gif = False
+
         (dir, asset, hash) = file
+        if dir[-4:].lower() == ".gif":
+            is_gif = True
         issuance = asset_issuance(asset)
-        thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'])
+        thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'], is_gif)
         candidates.append(thing)
 
     cache.set('candidates', candidates, timeout=300)
