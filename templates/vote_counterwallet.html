@@ -114,8 +114,7 @@
 
       $('#submit').click(function(){
           message = generateMessage();
-          post('/vote', {vote_string: message});
-        }
+          post('/vote_counterwallet', {vote_string: message});
       });
     });
   </script>
