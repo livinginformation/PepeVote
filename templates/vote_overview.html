@@ -1,4 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
-
+<div class='flex-column align-items-center justify-content-center d-flex'>
+    <div class='nice-header'>Overview on Voting</div>
+    <div class='alone-text'>1. Your vote is a rating of how much you like a piece of art</div>
+    <div class='alone-text'>2. Votes do not get used up when you rate a submission. Feel free to vote for as many (or as few) submissions as you like.</div>
+    <div class='alone-text'>3. You can re-cast your vote once every bitcoin block.</div>
+    
+    <div class='submit-holder flex-row justify-content-between d-flex'>
+        <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
+        	<div class='alone-text'>Vote with Counterwallet</div>
+			<a href="pepevote.com/vote_counterwallet"><img class='create_asset_icon' href="{{ url_for('static', filename='Counterparty.png') }}"   src="{{ url_for('static', filename='Counterparty.png') }}" alt="Counterwallet"></a>
+        </div>
+        <div class='divider'></div>
+        <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
+        	<div class='alone-text'>Vote with Rare Pepe Wallet</div>
+			<a href="pepevote.com/vote_rpw"><img class='create_asset_icon' href="{{ url_for('static', filename='pepemoney.png') }}"   src="{{ url_for('static', filename='pepemoney.png') }}" alt="RarePepeWa	llet"></a>
+        </div>
+    </div>
+</div>
 {% endblock %}
