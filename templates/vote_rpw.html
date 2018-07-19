@@ -12,8 +12,13 @@
         <div class='submission flex-column align-items-center justify-content-center d-flex'>
             <div class='center-text alone-text'>{{asset}}</div>
             <div class='center-text'><b>{{issuance}} Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ candidate }}" alt="Submission">
+						<br>
+						{% if is_gif %}
+						<img class='submission-pic gifplayer' src="{{ candidate }}" alt="Submission">
+						{% endif %}
+						{% if not is_gif %}
+						<img class='submission-pic' src="{{ candidate }}" alt="Submission">
+						{% endif %}
             <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
               <div class='flex-column align-items-center justify-content-center d-flex flex-wrap'>
                 <div><b>Card Votes </b></div>
@@ -69,6 +74,10 @@
       {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %} 
         jQuery("#{{ asset }}slider").slider({});
       {% endfor %}
+			console.log(`$('.gifplayer')`, $('.gifplayer'))
+			$('.gifplayer').gifplayer('stop');
+			console.log('gif stopeed')
+
 
       function updateSliders() {
         {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
