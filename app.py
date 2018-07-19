@@ -766,17 +766,39 @@ def vote_rpw():
 
         return render_template('vote_rpw.html', candidates=candidates, block_num=block)
 
-    else:
+    vote_string = '{}'
+    if 'vote_string' in request.form:
+        vote_string = request.form['vote_string']
 
-        vote_string = '{}'
-        if 'vote_string' in request.form:
-            vote_string = request.form['vote_string']
+    m = hashlib.sha256()
+    m.update(bytes(vote_string, encoding='utf-8'))
+    vote_string_hash = m.hexdigest()
+    cache.set(m.hexdigest(), vote_string, timeout=300)
+    return render_template('submit_vote_rpw.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
 
-        m = hashlib.sha256()
-        m.update(bytes(vote_string, encoding='utf-8'))
-        vote_string_hash = m.hexdigest()
-        cache.set(m.hexdigest(), vote_string, timeout=300)
-        return render_template('submit_vote_rpw.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
+
+@app.route('/vote_counterwallet', methods=['GET', 'POST'])
+def vote_counterwallet():
+    if request.method == 'GET':
+
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote_counterwallet.html', candidates=candidates, block_num=block)
+
+    vote_string = '{}'
+    if 'vote_string' in request.form:
+        vote_string = request.form['vote_string']
+
+    m = hashlib.sha256()
+    m.update(bytes(vote_string, encoding='utf-8'))
+    vote_string_hash = m.hexdigest()
+    cache.set(m.hexdigest(), vote_string, timeout=300)
+    return render_template('submit_vote_counterwallet.html', vote_string=vote_string, vote_string_hash=vote_string_hash)
 
 
 @app.route('/submit_overview', methods=['GET'])
@@ -891,6 +913,95 @@ def submit_vote():
                 status = 'Vote submitted successfully.'
                 update_scores()
                 return render_template('submit_vote.html', vote_string=vote_string, status=status)
+
+
+@app.route('/submit_vote_counterwallet', methods=['GET', 'POST'])
+def submit_vote_counterwallet():
+    if request.method == 'GET':
+        return redirect('/vote_counterwallet')
+
+    signature   = ''
+    vote_string = ''
+
+    if 'signature' in request.form: signature = request.form['signature']
+    if 'vote_string' in request.form: vote_string = request.form['vote_string']
+    if 'address' in request.form: address = request.form['address']
+
+    if vote_string == "":
+        candidates = cache.get('candidates')
+        block = get_current_block()
+
+        if candidates is None:
+            print("Shouldn't be here")
+            candidates = update_scores()
+
+        return render_template('vote_counterwallet.html', candidates=candidates, block_num=block)
+
+    m = hashlib.sha256()
+    m.update(bytes(vote_string, encoding='utf-8'))
+
+    if  signature == "":
+        status = 'Signature is missing.'
+        return render_template('submit_vote_counterwallet.html', vote_string=vote_string, vote_string_hash=m.hexdigest(), status=status)
+
+    if address == "":
+        status = 'Address is missing'
+        return render_template('submit_vote_counterwallet.html', vote_string=vote_string, vote_string_hash=m.hexdigest(), status=status)
+
+    # TODO: Change 'image hash' to 'hash' for terseness
+    # TODO: Change status to error for readability?
+
+    try:
+        message_object = json.loads(vote_string)
+    except:
+        print("errored.")
+        status='Message is not properly formatted JSON'
+        return render_template('submit_vote_counterwallet.html', vote_string=vote_string, vote_string_hash=m.hexdigest(), status=status) # Make this a redirect to vote?
+
+    try:
+        block     = message_object['block']
+        votes     = message_object['votes']
+
+    except:
+        status = "Error: This shouldn't happen. These inputs are all generated."
+        return render_template('submit_vote_counterwallet.html', vote_string=vote_string, status=status) # redirect to vote
+
+    data = BitcoinMessage(m.hexdigest())
+    try:
+        verified = VerifyMessage(address, data, signature)
+
+    except:
+        status = 'Verification failed - signature is malformed.'
+        return render_template('submit_vote_counterwallet.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
+
+    if not verified:
+        status = 'Verification failed.'
+        return render_template('submit_vote_counterwallet.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
+
+    entry = get_existing_vote(address)
+
+    if entry is not None:
+        # Check block height to see if message is reused
+        (_, old_block, _, _) = entry
+
+        if block <= old_block:
+            print("Reusing old message")
+            status = 'Error: reused old vote'
+            return render_template('submit_vote_counterwallet.html', status=status, vote_string=vote_string, vote_string_hash=m.hexdigest())
+
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    tuple = (address, block, str(votes), signature)
+    c.execute("INSERT OR REPLACE INTO votes(address, block, votes, signature) VALUES(?, ?, ?, ?)", tuple)
+    conn.commit()
+    conn.close()
+
+    print('Vote submitted successfully')
+
+    status = 'Vote submitted successfully.'
+    update_scores()
+    return render_template('submit_vote_counterwallet.html', vote_string=vote_string, status=status)
 
 
 @app.route('/submit_vote_rpw', methods=['GET', 'POST'])
@@ -1043,7 +1154,6 @@ def submit_message():
                 conn.close()
 
                 success = 'Verification succeeded, your art has been registered.'
-
 
     try:
         return render_template('create_submission.html', success=success,hash=hash,message=message, msghash=m.hexdigest())

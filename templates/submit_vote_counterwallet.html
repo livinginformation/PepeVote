@@ -15,6 +15,9 @@
                 <button type="button" class="btn" data-clipboard-target="#vote_string_hash">
                     <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
                 </button>
+                Enter the address you are voting with here:
+                <br>
+                <input type="text" name="address">
                 <br>
                 Paste the signature from Counterwallet here:
                 <br>
@@ -26,13 +29,6 @@
             Status: {{status}}
             <br>
             <br>
-        </div>
-        <div class='divider'></div>
-        <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
-            <button id='pepe-sign' class='btn btn-primary' type="button" id="submitbroken">Sign With RarePepeWallet (currently broken)</button>
-            <iframe id='pepe-frame' frameborder='0' noresize='noresize' style='display:none; position: absolute; background: transparent; width:400px; height:400px;' 
-                src="https://rarepepewallet.com/?who=pepevote&msg={{ vote_string_hash }}&return=https://pepevote.com/rpwverify" frameborder="0">
-            </iframe>
         </div>
     </div>
 </div>
