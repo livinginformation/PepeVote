@@ -22,7 +22,7 @@ from collections import defaultdict
 from werkzeug.contrib.cache import SimpleCache
 from apscheduler.schedulers.background import BackgroundScheduler
 from decimal import *
-getcontext().prec = 2
+getcontext().prec = 8
 
 
 scheduler = BackgroundScheduler()
@@ -383,7 +383,7 @@ def update_scores():
         if dir[-4:].lower() == ".gif":
             is_gif = True
         issuance = asset_issuance(asset)
-        thing = (asset, hash, dir, issuance, scores[asset]['card_score'], scores[asset]['cash_score'], is_gif)
+        thing = (asset, hash, dir, issuance, scores[asset]['card_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), scores[asset]['cash_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), is_gif)
         candidates.append(thing)
 
     cache.set('candidates', candidates, timeout=300)
