@@ -2,25 +2,25 @@
 {% block body %}
 <div class='flex-column align-items-center justify-content-center d-flex'>
     <div class='nice-header'>Vote Submission</div>
-    <div class='alone-text'>To submit the vote you can manually sign <b>or</b> you can use RarePepeWallet</div>
+    <div class='alone-text'></div>
     <div class='submit-holder flex-row justify-content-between d-flex'>
         <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
             <br>
             <form class='center-text flex-column align-items-center justify-content-center d-flex' action="/submit_vote_counterwallet" method="POST">
-                Copy the following message hash, and sign it with Counterwallet:
-                <br>
-                <br>
+                <div class='alone-text'>Copy the following message hash, and sign it with Counterwallet:</div>
                 <input type="text" style="display:none;" name="vote_string" value="{{ vote_string }}" id="message" readonly="readonly">
                 <input type="text" name="vote_string_hash" value="{{ vote_string_hash }}" id="vote_string_hash" readonly="readonly">
                 <button type="button" class="btn" data-clipboard-target="#vote_string_hash">
                     <img src="static/clippy.svg" alt="Copy to clipboard" width="13">
                 </button>
-                Enter the address you are voting with here:
-                <br>
+<br>
+                <div class='alone-text'>Enter the address you are voting with here:</div>
                 <input type="text" name="address">
                 <br>
+<br>
+                <div class='alone-text'>
                 Paste the signature from Counterwallet here:
-                <br>
+                </div>
                 <input type="text" name="signature">
                 <br>
                 <input class='btn btn-primary' type="submit" value="Vote">

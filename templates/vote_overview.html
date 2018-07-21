@@ -5,18 +5,30 @@
     <div class='alone-text'>
          Your vote is a rating of how much you like a piece of art, and can be changed once every bitcoin block. 
          <br>
-         Votes do not get used up when rating, feel free to vote for as many (or as few) submissions as you like.
+				 Votes do not get used up when rating, feel free to vote for as many (or as few) submissions as you like.
+				 <br>
+         Votes are calculated, and is art chosen, each week on the first Bitcoin block after Sunday 11:59PM PST.
     </div>
+<br>
+<br>
     <div class='submit-holder flex-row justify-content-between d-flex'>
         <div class='man-sign flex-column align-items-center justify-content-center d-flex'>
-        	<div class='alone-text'>Vote with Counterwallet</div>
-			<a href="/vote_counterwallet"><img class='create_asset_icon' href="{{ url_for('static', filename='counterparty-xcp.svg') }}"   src="{{ url_for('static', filename='counterparty-xcp.svg') }}" alt="Counterwallet"></a>
-        </div>
+					<div class='alone-text'>Counterwallet</div>
+					<br>
+					<a href="/vote_counterwallet"><img class='create_asset_icon' href="{{ url_for('static', filename='counterparty-xcp.svg') }}"   src="{{ url_for('static', filename='counterparty-xcp.svg') }}" alt="Counterwallet"></a>
+					<br>
+					<br>
+					<a class="btn btn-danger" href="/vote_counterwallet">Vote with Counterwallet</a>
+				</div>
         <div class='divider'></div>
         <div class='pepe-sign  p-2 flex-column align-items-center justify-content-center d-flex'>
-        	<div class='alone-text'>Vote with Rare Pepe Wallet</div>
-			<a href="/vote_rpw"><img class='create_asset_icon' href="{{ url_for('static', filename='pepemoney.png') }}"   src="{{ url_for('static', filename='pepemoney.png') }}" alt="RarePepeWallet"></a>
-        </div>
+					<div class='alone-text'>Rare Pepe Wallet</div>
+					<br>
+					<a href="/vote_rpw"><img class='create_asset_icon' href="{{ url_for('static', filename='pepemoney.png') }}"   src="{{ url_for('static', filename='pepemoney.png') }}" alt="RarePepeWallet"></a>
+					<br>
+					<br>
+					<a class="btn btn-primary" href="/vote_rpw">Vote with Rare Pepe Wallet</a>
+				</div>
     </div>
 </div>
 {% endblock %}
