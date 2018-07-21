@@ -21,7 +21,8 @@ from PIL import Image
 from collections import defaultdict
 from werkzeug.contrib.cache import SimpleCache
 from apscheduler.schedulers.background import BackgroundScheduler
-
+from decimal import *
+getcontext().prec = 2
 
 
 scheduler = BackgroundScheduler()
@@ -305,8 +306,8 @@ def get_submissions_data():
         if data is not None:
             (_, asset, _, _, _, _) = data
             scores[asset] = {}
-            scores[asset]['cash_score'] = 0
-            scores[asset]['card_score'] = 0
+            scores[asset]['cash_score'] = Decimal(0)
+            scores[asset]['card_score'] = Decimal(0)
             files.append((os.path.join(dir, submission), asset, hash))
 
     conn.close()
@@ -371,8 +372,8 @@ def update_scores():
             cash_score = (cash_votes * (int(user_vote['weight'])))/100
             card_score = (card_votes * (int(user_vote['weight'])))/100
 
-            scores[user_vote['asset']]['cash_score'] += cash_score
-            scores[user_vote['asset']]['card_score'] += card_score
+            scores[user_vote['asset']]['cash_score'] += Decimal(cash_score)
+            scores[user_vote['asset']]['card_score'] += Decimal(card_score)
 
 
     for file in files:
