@@ -389,6 +389,52 @@ def update_scores():
     cache.set('candidates', candidates, timeout=300)
     return candidates
 
+def update_voteset():
+    print("Getting Voteset")
+    weeks_voters = []
+
+    (files, scores) = get_submissions_data()
+
+    conn = sqlite3.connect('pepevote.db')
+    c = conn.cursor()
+
+    c.execute('SELECT * from votes')
+    votes = c.fetchall()
+
+    c.execute('SELECT * from delegates')
+    delegates = c.fetchall()
+
+    conn.close()
+
+    # Get every delegate, and set them up in a dictionary
+    delegate_mapping = defaultdict(list)    # mapping from delegates to an array of addresses delegated to them
+    delegated_mapping   = {} # mapping from delegated addresses to the address they are delegated to
+
+    for (delegated, delegate, _) in delegates: 
+        delegate_mapping[delegate].append(delegated)
+        delegated_mapping[delegated] = delegate
+
+    for vote in votes:
+        (address, block, set, signature) = vote
+        set = set.replace("'",'"')
+
+        if address in delegated_mapping:
+            if delegated_mapping[address] != "":
+                # This address has been delegated, don't count its votes
+                continue
+
+        delegate_mapping[address].append(address)
+        cash_votes = get_votes_cash(delegate_mapping[address])
+        card_votes = get_votes_cards(delegate_mapping[address])
+
+        user_votes = json.loads(set)
+
+        thing = (set, address, signature, cash_votes, card_votes)
+        weeks_voters.append(thing)
+
+    cache.set('weeks_voters', weeks_voters, timeout=300)
+    return weeks_voters
+
 
 def insert_into_delegates(source, delegate, signature):
     tuple = (source, delegate, signature)
@@ -549,7 +595,15 @@ def rpwverify():
 
 @app.route('/vote_list')
 def vote_list():
-    return render_template('vote_list.html')
+    voteset = 
+    voteset = cache.get('weeks_votes')
+    block = get_current_block()
+
+    if voteset is None:
+        print("Shouldn't be here")
+        voteset = update_voteset()
+
+    return render_template('vote_list.html', voteset=voteset)
 
 
 @app.route('/upload', methods=['POST'])
