@@ -432,7 +432,7 @@ def update_voteset():
         thing = (set, address, signature, cash_votes, card_votes)
         weeks_voters.append(thing)
 
-    cache.set('weeks_voters', weeks_voters, timeout=600)
+    cache.set('weeks_votes', weeks_voters, timeout=600)
     return weeks_voters
 
 
