@@ -595,7 +595,6 @@ def rpwverify():
 
 @app.route('/vote_list')
 def vote_list():
-    voteset = 
     voteset = cache.get('weeks_votes')
     block = get_current_block()
 

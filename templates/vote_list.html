@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="container">
-{% for (set, address, signature, card_votes, cash_votes) in voteset %}
+{% for (set, address, signature, cash_votes, card_votes) in voteset %}
 Address: {{address}}
 <br>
 Voteset: {{set}}
@@ -11,7 +11,10 @@ Signature: {{signature}}
 Card Votes: {{card_votes}}
 <br>
 Cash Votes: {{cash_votes}}
+<br>
+<br>
 -------------------------------------
+<br>
 {% endfor %}
 </div>
 {% endblock %}
