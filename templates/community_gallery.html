@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class='flex-column align-items-center justify-content-center d-flex'>
+    <div class='nice-header'>Voting</div>
+    <div>The following images have completed the submission process.</div>
+    <br>
+    {{status}}
+  </div>
+	<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+        <div class='submission flex-column align-items-center justify-content-center d-flex'>
+            <div class='center-text alone-text'>IVOTED</div>
+            <div class='center-text'><b>250 Created</b></div>
+			<br>
+			<img class='submission-pic' src="{{ url_for('static', 'submitted', filename='IVOTED.jpg') }}" alt="Submission">
+        </div>
+        <div class='submission flex-column align-items-center justify-content-center d-flex'>
+            <div class='center-text alone-text'>PEPEDREDD</div>
+            <div class='center-text'><b>344 Created</b></div>
+			<br>
+			<img class='submission-pic' src="{{ url_for('static', 'submitted', filename='pepe dredd.jpg') }}" alt="Submission">
+        </div>
+	</div>
+  <div class="flex-column align-items-center justify-content-center d-flex">
+    <button class='btn btn-primary' type="submit" id="submit">Vote</button>
+    <div id="status">
+      <span></span>
+    </div>
+  </div>
+{% endblock %}

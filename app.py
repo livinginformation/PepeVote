@@ -386,7 +386,7 @@ def update_scores():
         thing = (asset, hash, dir, issuance, scores[asset]['card_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), scores[asset]['cash_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), is_gif)
         candidates.append(thing)
 
-    cache.set('candidates', candidates, timeout=300)
+    cache.set('candidates', candidates, timeout=600)
     return candidates
 
 def update_voteset():
@@ -432,7 +432,7 @@ def update_voteset():
         thing = (set, address, signature, cash_votes, card_votes)
         weeks_voters.append(thing)
 
-    cache.set('weeks_voters', weeks_voters, timeout=300)
+    cache.set('weeks_voters', weeks_voters, timeout=600)
     return weeks_voters
 
 
@@ -476,49 +476,6 @@ def get_existing_verified_message(hash, asset):
     entry = c.fetchone()
     conn.close()
     return entry
-
-# get_votes_cards
-# input: address
-# output: integer number of votes based on card holdings (except PEPECASH)
-#
-# get balances for address
-# check every balance against dict for valid rarepepes
-# 1000 votes per card
-# votes = (address card balance / total card issuance) X 1000
-# return sum of votes for all rarepepe holdings
-
-# get_votes_cash
-# input: address
-# output: integer number of votes based on PEPECASH holdings
-
-# get_candidates
-# input: two block heights, threshold (submission buy-in)
-# output:
-
-#get_votes_cards(my_addy)
-
-
-#setup()
-
-#print(divisibles)
-#votes_cards = get_votes_cards(my_addy)
-#print("Address " + my_addy + " has " + str(votes_cards) + " Card votes")
-
-#votes_cash = get_votes_cash(my_addy)
-#print("Address " + my_addy + " has " + str(votes_cash) + " Cash votes")
-
-#get_candidates(515320,515990)
-
-#get_sends()
-
-#vote_data = '{"block":515368,"address":"18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo","votes":[{"hash":"7e497501a28bcf9a353ccadf6eb9216bf098ac32888fb542fb9bfe71d486761f","weight": 100}]}'
-#vote_json = json.loads(vote_data)
-#vote_address = vote_json['address']
-#vote_signature = "IKSEdxcSYzbZA5k5kSCuePuARr2j98GgPggXPQaNNoxkB9fpu9z1lsh6BYXMnAQmcX04td5SZAnpetptdVW4Em4="
-#print(vote_address)
-#vote_data_t = BitcoinMessage(vote_data)
-
-#print(VerifyMessage(vote_address, vote_data_t, vote_signature))
 
 
 setup()
@@ -1029,7 +986,7 @@ def submit_message():
                 # Check if the burn fee is paid
                 paid = False
 
-                candidates = get_candidates(532129,550000)
+                candidates = get_candidates(533226,550000)
 
                 for candidate in candidates:
                     if hash == candidate:
@@ -1087,14 +1044,21 @@ def submit_message():
         return render_template('create_submission.html')
 
 
+@app.route('/community_gallery', methods=['GET'])
+def community_gallery():
+    return render_template('community_gallery.html')
+
+
 def main():
     parser = optparse.OptionParser(usage="%prog [options]  or type %prog -h (--help)")
     parser.add_option('--tornado', help='Tornado non-blocking web server', action="callback", callback=tornado,type="int");
     parser.add_option('--twisted', help='Twisted event-driven web server', action="callback", callback=twisted, type="int");
     parser.add_option('--builtin', help='Built-in Flask web development server', action="callback", callback=builtin, type="int");
-    job = scheduler.add_job(update_scores, 'interval', minutes=2)
+    job = scheduler.add_job(update_scores, 'interval', minutes=5)
+    job = scheduler.add_job(update_voteset, 'interval', minutes=5)
     scheduler.start()
     update_scores()
+    update_voteset()
     # update_scores runs twice sometimes on startup, that's ok. Not a huge deal.
     (options, args) = parser.parse_args()
     parser.print_help()
