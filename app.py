@@ -96,7 +96,11 @@ def twisted(option, opt_str, value, parser):
 
     reactor.listenSSL(getPort(443), site,  sslContext)
     reactor.listenTCP(getPort(value), site, interface="0.0.0.0")
-    reactor.run()
+    try:
+        reactor.run()
+    except builtins.AttributeError as e:
+        print("Lose Connection Error")
+
 
 
 def builtin(option, opt_str, value, parser):
