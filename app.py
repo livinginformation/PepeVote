@@ -98,7 +98,7 @@ def twisted(option, opt_str, value, parser):
     reactor.listenTCP(getPort(value), site, interface="0.0.0.0")
     try:
         reactor.run()
-    except builtins.AttributeError as e:
+    except AttributeError as e:
         print("Lose Connection Error")
 
 
@@ -1048,9 +1048,9 @@ def submit_message():
         return render_template('create_submission.html')
 
 
-@app.route('/community_gallery', methods=['GET'])
-def community_gallery():
-    return render_template('community_gallery.html')
+@app.route('/certified', methods=['GET'])
+def certified():
+    return render_template('certified.html')
 
 
 def main():

@@ -1,20 +1,34 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="container">
-{% for (set, address, signature, cash_votes, card_votes) in voteset %}
-Address: {{address}}
-<br>
-Voteset: {{set}}
-<br>
-Signature: {{signature}}
-<br>
-Card Votes: {{card_votes}}
-<br>
-Cash Votes: {{cash_votes}}
-<br>
-<br>
--------------------------------------
-<br>
-{% endfor %}
+	<div class='flex-column align-items-center justify-content-center d-flex'>
+			<div class='nice-header'>Vote Data</div>
+			<div>Verifiable data that we pull directly from the blockchain and use to count votes on each week's submissions</div>
+			<br>
+	</div>
+	{% for (set, address, signature, cash_votes, card_votes) in voteset %}
+	<div class='d-flex align-items-center'>
+			<div class='alone-text'>Address: </div>{{address}}
+	</div>
+	<br>
+	<div class='d-flex align-items-center'>
+			<div class='alone-text'>Voteset: </div>{{set}}
+	</div>
+	<br>
+	<div class='d-flex align-items-center'>
+			<div class='alone-text'>Signature: </div>{{signature}}
+	</div>
+	<br>
+	<div class='d-flex align-items-center'>
+			<div class='alone-text'>Card Votes: </div>{{card_votes}}
+	</div>
+	<br>
+	<div class='d-flex align-items-center'>
+			<div class='alone-text'>Cash Votes: </div>{{cash_votes}}
+	</div>
+	<br>
+	<br>
+	<br>
+	{% endfor %}
 </div>
 {% endblock %}

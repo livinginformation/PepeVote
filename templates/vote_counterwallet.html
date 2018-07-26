@@ -2,7 +2,7 @@
 {% block body %}
   <div class='flex-column align-items-center justify-content-center d-flex'>
     <div class='nice-header'>Voting</div>
-    <div>The following images have completed the submission process.</div>
+    <div>TThe following images have completed the submission process. Use the sliders below the cards to vote and then submit the votes when you are finished.</div>
     <br>
     {{status}}
   </div>
@@ -31,7 +31,8 @@
         {% endfor %}
 	</div>
   <div class="flex-column align-items-center justify-content-center d-flex">
-    <button class='btn btn-primary' type="submit" id="submit">Vote</button>
+		<button class='btn btn-primary' type="submit" id="submit">Vote</button>
+		<a class='btn btn-danger'  href="/vote_list">Verify Votes</a>
     <div id="status">
       <span></span>
     </div>
