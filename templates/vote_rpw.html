@@ -113,8 +113,8 @@
           if (val != "0") {
             vote_string += '{"asset":"{{ asset }}",'
             vote_string += '"hash":"{{ hash }}",'
-          vote_string += '"weight":"' + val + '"},'
-        }
+            vote_string += '"weight":"' + val + '"},'
+          }
         {% endfor %}
         vote_string = vote_string.substring(0, vote_string.length - 1)
         vote_string += ']}'
