@@ -100,12 +100,12 @@
         vote_string =  '{"block":"' + block + '",'
         vote_string += '"votes":['
         {% for (asset, hash, candidate, issuance, card_score, cash_score, is_gif) in candidates %}
-          vote_string += '{"asset":"{{ asset }}",'
-          vote_string += '"hash":"{{ hash }}",'
-
           val = jQuery("#{{ asset }}slider").slider("option", "value").val();
-
-          vote_string += '"weight":"' + val + '"},'
+          if (val != "0") {
+            vote_string += '{"asset":"{{ asset }}",'
+            vote_string += '"hash":"{{ hash }}",'
+            vote_string += '"weight":"' + val + '"},'
+          }
         {% endfor %}
         vote_string = vote_string.substring(0, vote_string.length - 1)
         vote_string += ']}'
