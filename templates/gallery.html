@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+Status:
+<br>
+{{status}}
+<br>
+<br>
+{% for card in cards %}
+{{card}}
+<br>
+{% endfor %}
+{% endblock %}

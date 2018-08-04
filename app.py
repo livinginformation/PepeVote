@@ -62,6 +62,8 @@ auth = HTTPBasicAuth('rpc', 'rpc')
 burn_addy = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R"
 my_addy   = "18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo"
 
+pepevote_set = ['IVOTED', 'PEPEDREDD', 'MAGMAPEPE', 'JAWSPEPE']
+
 home_dir = os.path.expanduser("~")
 
 sslContext = ssl.DefaultOpenSSLContextFactory(
@@ -496,6 +498,21 @@ def get_existing_verified_message(hash, asset):
     return entry
 
 
+def owned_cards(address):
+    owned_cards = []
+
+    balances = get_balances(address)
+
+    for asset in balances:
+        if asset in masterlist:
+            owned_cards.append(asset)
+
+        elif asset in pepevote_set:
+            owned_cards.append(asset)
+
+    return owned_cards
+
+
 setup()
 
 
@@ -627,6 +644,19 @@ def get_votes():
                            votes_cards=votes_cards,
                            votes_cash=votes_cash
                            )
+
+
+@app.route('/gallery', methods=['GET'])
+def gallery():
+    cards = []
+    address = [request.args['address']]
+    if address == '':
+        status = 'Please enter an addresss.'
+        return render_template('gallery.html', status=status, cards=cards)
+    
+    cards = owned_cards(address)
+    print(cards)
+    return render_template('gallery.html', cards=cards)
 
 
 @app.route('/get_submissions', methods=['GET'])
