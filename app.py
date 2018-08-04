@@ -62,7 +62,7 @@ auth = HTTPBasicAuth('rpc', 'rpc')
 burn_addy = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R"
 my_addy   = "18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo"
 
-pepevote_set = {'IVOTED': {"img_url": "submitted/IVOTED.jpg"}, 'PEPEDREDD': {"img_url": "submitted/pepe dredd.jpg"}, 'MAGMAPEPE': {"img_url": "submitted/Animation.gif"}, 'JAWSPEPE': {"img_url": "submitted/jawspepe_compressed.png"}}
+pepevote_set = {'IVOTED': {"img_url": "static/submitted/IVOTED.jpg"}, 'PEPEDREDD': {"img_url": "static/submitted/pepe dredd.jpg"}, 'MAGMAPEPE': {"img_url": "static/submitted/Animation.gif"}, 'JAWSPEPE': {"img_url": "static/submitted/jawspepe_compressed.png"}}
 home_dir = os.path.expanduser("~")
 
 sslContext = ssl.DefaultOpenSSLContextFactory(
