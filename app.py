@@ -505,11 +505,13 @@ def owned_cards(address):
     for asset in balances:
         if asset in masterlist:
             img_url = masterlist[asset]['img_url']
-            owned_cards.append((asset,img_url,))
+            balance = balances[asset]
+            owned_cards.append((asset,img_url,balance))
 
         elif asset in pepevote_set:
             img_url = pepevote_set[asset]['img_url']
-            owned_cards.append((asset,img_url,))
+            balance = balances[asset]
+            owned_cards.append((asset,img_url,balance))
 
     return owned_cards
 
