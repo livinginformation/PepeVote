@@ -22,6 +22,7 @@ from collections import defaultdict
 from werkzeug.contrib.cache import SimpleCache
 from apscheduler.schedulers.background import BackgroundScheduler
 from decimal import *
+from flask_sslify import SSLify
 getcontext().prec = 8
 
 
@@ -43,6 +44,7 @@ conn.commit()
 conn.close()
 
 app = Flask(__name__)
+sslify = SSLify(app)
 CORS(app)
 
 # app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # for 4MB max-limit.
@@ -390,7 +392,8 @@ def update_scores():
         thing = (asset, hash, dir, issuance, scores[asset]['card_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), scores[asset]['cash_score'].quantize(Decimal('.01'), rounding=ROUND_DOWN), is_gif)
         candidates.append(thing)
 
-    cache.set('candidates', candidates, timeout=600)
+    cache.set('candidates', candidates, timeout=1200)
+    cache.set('checkme', 'true', timeout=600)
     return candidates
 
 def update_voteset():
@@ -436,8 +439,19 @@ def update_voteset():
         thing = (set, address, signature, cash_votes, card_votes)
         weeks_voters.append(thing)
 
-    cache.set('weeks_votes', weeks_voters, timeout=600)
+    cache.set('weeks_votes', weeks_voters, timeout=1200)
     return weeks_voters
+
+
+def update_check():
+    print("checking cache")
+    var = cache.get('checkme')
+
+    if var is None:
+        print("Running an update")
+        update_voteset()
+        update_scores()
+        cache.set('checkme', 'true', timeout=600)
 
 
 def insert_into_delegates(source, delegate, signature):
@@ -546,7 +560,7 @@ def rpwverify():
 
         print('Vote submitted successfully.')
 
-        update_scores()
+        cache.delete('checkme')
         return success
 
     except:
@@ -725,10 +739,11 @@ def delegate_submit():
 
     data = BitcoinMessage(delegate_string)
     m = hashlib.sha256()
-    m.update(bytes(data, encoding='utf-8'))
+    m.update(bytes(delegate_string, encoding='utf-8'))
+    data = BitcoinMessage(m.hexdigest())
 
     try:
-        verified = VerifyMessage(source, m.hexdigest(), signature)
+        verified = VerifyMessage(source, data, signature)
     except:
         verified = False
 
@@ -741,6 +756,7 @@ def delegate_submit():
     print('Delegation processed successfully.')
 
     status = 'Delegation processed successfully.'
+    cache.delete('checkme')
     return render_template('delegate_submit.html', status=status, delegate_string=delegate_string)
 
 
@@ -887,7 +903,7 @@ def submit_vote_counterwallet():
     print('Vote submitted successfully')
 
     status = 'Vote submitted successfully.'
-    update_scores()
+    cache.delete('checkme')
     return render_template('submit_vote_counterwallet.html', vote_string=vote_string, status=status)
 
 
@@ -990,7 +1006,7 @@ def submit_message():
                 # Check if the burn fee is paid
                 paid = False
 
-                candidates = get_candidates(533226,550000)
+                candidates = get_candidates(534364,550000)
 
                 for candidate in candidates:
                     if hash == candidate:
@@ -1058,14 +1074,14 @@ def main():
     parser.add_option('--tornado', help='Tornado non-blocking web server', action="callback", callback=tornado,type="int");
     parser.add_option('--twisted', help='Twisted event-driven web server', action="callback", callback=twisted, type="int");
     parser.add_option('--builtin', help='Built-in Flask web development server', action="callback", callback=builtin, type="int");
-    job = scheduler.add_job(update_scores, 'interval', minutes=5)
-    job = scheduler.add_job(update_voteset, 'interval', minutes=5)
+    job = scheduler.add_job(update_check, 'interval', minutes=1)
     scheduler.start()
     update_scores()
     update_voteset()
     # update_scores runs twice sometimes on startup, that's ok. Not a huge deal.
     (options, args) = parser.parse_args()
     parser.print_help()
+
 
 if __name__ == "__main__":
     main()
