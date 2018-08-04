@@ -649,11 +649,14 @@ def get_votes():
 @app.route('/gallery', methods=['GET'])
 def gallery():
     cards = []
-    address = [request.args['address']]
+    address = ''
+    if 'address' in request.args:
+        address = request.args['address']
+
     if address == '':
         status = 'Please enter an addresss.'
         return render_template('gallery.html', status=status, cards=cards)
-    
+
     cards = owned_cards(address)
     print(cards)
     return render_template('gallery.html', cards=cards)
