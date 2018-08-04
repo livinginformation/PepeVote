@@ -5,8 +5,10 @@ Status:
 {{status}}
 <br>
 <br>
-{% for (asset,img_url) in cards %}
-<div class='center-text alone-text'>{{asset}}</div>
+{% for (asset,img_url, balance) in cards %}
+<div class='alone-text'>{{asset}}</div>
+<br>
+Balance: {{balance}}
 <br>
 <img class='submission-pic' src="{{ img_url }}" alt="asset">
 <br>
