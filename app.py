@@ -445,7 +445,6 @@ def update_voteset():
 
 
 def update_check():
-    print("checking cache")
     var = cache.get('checkme')
 
     if var is None:
@@ -506,12 +505,14 @@ def owned_cards(address):
         if asset in masterlist:
             img_url = masterlist[asset]['img_url']
             balance = balances[asset]
-            owned_cards.append((asset,img_url,balance))
+            if balance != 0:
+                owned_cards.append((asset,img_url,balance))
 
         elif asset in pepevote_set:
             img_url = pepevote_set[asset]['img_url']
             balance = balances[asset]
-            owned_cards.append((asset,img_url,balance))
+            if balance != 0:
+                owned_cards.append((asset,img_url,balance))
 
     return owned_cards
 
@@ -661,8 +662,8 @@ def gallery():
         return render_template('gallery.html', status=status, cards=cards)
 
     cards = owned_cards(address)
-    print(cards)
-    return render_template('gallery.html', cards=cards)
+    print("checking address ", address)
+    return render_template('gallery.html', cards=cards, address=address)
 
 
 @app.route('/get_submissions', methods=['GET'])
@@ -1042,7 +1043,7 @@ def submit_message():
                 # Check if the burn fee is paid
                 paid = False
 
-                candidates = get_candidates(534364,550000)
+                candidates = get_candidates(536703,550000)
 
                 for candidate in candidates:
                     if hash == candidate:

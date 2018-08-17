@@ -1,17 +1,24 @@
 {% extends "layout.html" %}
 {% block body %}
-Status:
 <br>
-{{status}}
-<br>
-<br>
-{% for (asset,img_url, balance) in cards %}
-<div class='alone-text'>{{asset}}</div>
-<br>
-Balance: {{balance}}
-<br>
-<img class='submission-pic' src="{{ img_url }}" alt="asset">
+<div class='nice-header center-text'>Exploring Address: {{ address }}</div>
 <br>
 <br>
-{% endfor %}
+<div class='flex-row d-flex align-items-center justify-content-around'>
+	<div class='alone-text'>Card votes: {{votes_cards}} / 1800000</div>
+	<div class='alone-text'>Cash votes: {{votes_cash}} / 1000000</div>
+</div>
+<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+	{% for (asset,img_url,balance) in cards %}
+		<div class='submission flex-column align-items-center justify-content-center d-flex'>
+			<div class='center-text alone-text'>{{asset}}</div>
+			<div class='center-text'><b>Balance: {{balance}}</b></div>
+			<br>
+			<img class='submission-pic' src="{{ img_url }}" alt="Submission">
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+			<br>
+			</div>
+		</div>
+	{% endfor %}
+</div>
 {% endblock %}
