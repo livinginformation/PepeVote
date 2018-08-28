@@ -2,14 +2,21 @@
 {% block body %} 
 <div class='pepe-background flex-row align-items-center justify-content-center d-flex'>Unstoppable Digital Pepes</div>
   <div class="container pepe-body">
-    <div class="container flex-row align-items-center justify-content-center d-flex">
+		<div class="flex-row align-items-center justify-content-center d-flex">
+			<div class="flex-column align-items-center justify-content-center d-flex red-card">
+				<div class='alone-text'>Do you have art you want to submit? Request to be sponsored <a class='white-bold' href='https://t.me/pepevote'>here!</a></div>
+			</div>
+		</div>
+		<br/>
+		<br/>
+		<div class="container flex-row align-items-center justify-content-center d-flex">
         <div class="card" style="width: 18rem;">
             <img class="card-img-top" href="{{ url_for('static', filename='modern_pepe.png') }}"   src="{{ url_for('static', filename='modern_pepe.png') }}" alt="Card image cap">
         </div>
         <div class="container flex-column align-items-center justify-content-center d-flex">
             <h5 class="card-title nice-header">What is PepeVote</h5>
             <p class="card-text fat-text">PepeVote is a democratized digital art curation platform. Every week, participants in the Rare Pepe economy vote to select two works of art to be permanently added to the collection. </p>
-            <a class="btn btn-primary" href="/about">How it works</a>
+            <a class="btn btn-primary" href="/certified">View Rare Art</a>
         </div>
     </div>
     <br/>
@@ -29,7 +36,7 @@
         <div class="flex-column align-items-start justify-content-start d-flex green-card">
             <div class='alone-text'>How it works</div>
                 <p>1. Every week artists submit digital art to the gallery</p>
-                <p >2. The Rare Pepe community votes on which art to accept</p>
+                <p >2. The PepeVote community votes on which art to accept</p>
                 <p >3. Two pieces of art are chosen each week</p>
                 <p >4. The first piece is chosen by majority vote by owned Pepecash</p>
                 <p >5. The second piece is chosen by majority vote by owned Pepe cards</p>

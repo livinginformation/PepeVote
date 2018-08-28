@@ -82,6 +82,20 @@ footer {
   padding: 40px;
 }
 
+.red-card {
+  color: white;
+	background: #CD3447;
+	width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.white-bold {
+	color: white;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
 .purple-button {
   background: #007bff;
 }

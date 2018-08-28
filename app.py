@@ -62,7 +62,7 @@ auth = HTTPBasicAuth('rpc', 'rpc')
 burn_addy = "1BurnPepexxxxxxxxxxxxxxxxxxxAK33R"
 my_addy   = "18E6DSBnrWkzkzMTMSkSnAjvVKNsRvardo"
 
-pepevote_set = {'IVOTED': {"img_url": "static/submitted/IVOTED.jpg"}, 'PEPEDREDD': {"img_url": "static/submitted/pepe dredd.jpg"}, 'MAGMAPEPE': {"img_url": "static/submitted/Animation.gif"}, 'JAWSPEPE': {"img_url": "static/submitted/jawspepe_compressed.png"}}
+pepevote_set = {'IVOTED': {"img_url": "static/submitted/IVOTED.jpg"},'PEPEDREDD': {"img_url": "static/submitted/pepe dredd.jpg"},'MAGMAPEPE': {"img_url": "static/submitted/Animation.gif"},'JAWSPEPE': {"img_url": "static/submitted/jawspepe_compressed.png"},'OJISANPEPE': {"img_url": "static/submitted/OJISAN.png"},'COURAGEFROG': {"img_url": "static/submitted/COURAGEFR.gif"},'DANGERPEPE': {"img_url": "static/submitted/hellfire2pepe.gif"},'QANON': {"img_url": "https://pepevote.com/static/submitted/QANON_REVISED.gif"}}
 home_dir = os.path.expanduser("~")
 
 sslContext = ssl.DefaultOpenSSLContextFactory(
@@ -662,8 +662,10 @@ def gallery():
         return render_template('gallery.html', status=status, cards=cards)
 
     cards = owned_cards(address)
+    votes_cards = get_votes_cards([address])
+    votes_cash  = get_votes_cash([address])
     print("checking address ", address)
-    return render_template('gallery.html', cards=cards, address=address)
+    return render_template('gallery.html', cards=cards, address=address, votes_cards=votes_cards, votes_cash=votes_cash)
 
 
 @app.route('/get_submissions', methods=['GET'])
@@ -1043,7 +1045,7 @@ def submit_message():
                 # Check if the burn fee is paid
                 paid = False
 
-                candidates = get_candidates(536703,550000)
+                candidates = get_candidates(537614,550000)
 
                 for candidate in candidates:
                     if hash == candidate:

@@ -2,70 +2,93 @@
 {% block body %}
     <div class='flex-column align-items-center justify-content-center d-flex'>
         <div class='nice-header'>Certified Rares</div>
-        <div>The following images have been certified as rare by the Rare Pepe community</div>
+        <div class='alone-text'>The following images have been certified as rare by the Rare Pepe community</div>
         <br>
 		</div>
 		<br>
-		<div class='nice-header center-text'>Generation 0</div>
-    <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>IVOTED</div>
-            <div class='center-text'><b>250 Created</b></div>
-  	    <br>
-	    <img class='submission-pic' src="{{ url_for('static', filename='submitted/IVOTED.jpg') }}" alt="Submission">
-        </div>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>PEPEDREDD</div>
-            <div class='center-text'><b>344 Created</b></div>
-	    <br>
-	    <img class='submission-pic' src="{{ url_for('static', filename='submitted/pepe dredd.jpg') }}" alt="Submission">
-        </div>
-    </div>
-    <div class='nice-header center-text'>Generation 1</div>
-    <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>MAGMAPEPE</div>
-            <div class='center-text'><b>120 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/Animation.gif') }}" alt="Submission">
-        </div>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>JAWSPEPE</div>
-            <div class='center-text'><b>100 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/jawspepe_compressed.png') }}" alt="Submission">
-        </div>
-    </div>
-    <div class='nice-header center-text'>Generation 2</div>
-    <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>OJISANPEPE</div>
-            <div class='center-text'><b>100 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/OJISAN.png') }}" alt="Submission">
-        </div>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>COURAGEFROG</div>
-            <div class='center-text'><b>332 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/COURAGEFR.gif') }}" alt="Submission">
-        </div>
-    </div>
-    <div class='nice-header center-text'>Generation 3</div>
-    <div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>DANGERPEPE</div>
-            <div class='center-text'><b>236 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/hellfire2pepe.gif') }}" alt="Submission">
-        </div>
-        <div class='submission flex-column align-items-center justify-content-center d-flex'>
-            <div class='center-text alone-text'>QANON</div>
-            <div class='center-text'><b>2017 Created</b></div>
-            <br>
-            <img class='submission-pic' src="{{ url_for('static', filename='submitted/QANON_REVISED.gif') }}" alt="Submission">
-        </div>
-    </div>
+		<div class="container pepe-body">
+			<div class="flex-row align-items-center justify-content-center d-flex">
+				<div class="flex-column align-items-center justify-content-center d-flex red-card">
+					<div class='alone-text'>Do you have art you want to submit? Request to be sponsored <a class='white-bold' href='https://t.me/pepevote'>here!</a></div>
+				</div>
+			</div>
+			<br/>
+			<div class='nice-header center-text'>Generation 0</div>
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>IVOTED</div>
+							<div class='center-text'><b>250 Created</b></div>
+					<br>
+				<img class='submission-pic' src="{{ url_for('static', filename='submitted/IVOTED.jpg') }}" alt="Submission">
+					</div>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>PEPEDREDD</div>
+							<div class='center-text'><b>344 Created</b></div>
+				<br>
+				<img class='submission-pic' src="{{ url_for('static', filename='submitted/pepe dredd.jpg') }}" alt="Submission">
+					</div>
+			</div>
+			<div class='nice-header center-text'>Generation 1</div>
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>MAGMAPEPE</div>
+							<div class='center-text'><b>120 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/Animation.gif') }}" alt="Submission">
+					</div>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>JAWSPEPE</div>
+							<div class='center-text'><b>100 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/jawspepe_compressed.png') }}" alt="Submission">
+					</div>
+			</div>
+			<div class='nice-header center-text'>Generation 2</div>
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>OJISANPEPE</div>
+							<div class='center-text'><b>100 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/OJISAN.png') }}" alt="Submission">
+					</div>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>COURAGEFROG</div>
+							<div class='center-text'><b>332 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/COURAGEFR.gif') }}" alt="Submission">
+					</div>
+			</div>
+			<div class='nice-header center-text'>Generation 3</div>
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>DANGERPEPE</div>
+							<div class='center-text'><b>236 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/hellfire2pepe.gif') }}" alt="Submission">
+					</div>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>QANON</div>
+							<div class='center-text'><b>2017 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/QANON_REVISED.gif') }}" alt="Submission">
+					</div>
+			</div>
+			<div class='nice-header center-text'>Generation 4</div>
+			<div class='flex-row align-items-center justify-content-center d-flex flex-wrap'>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>YARUOPEPE</div>
+							<div class='center-text'><b>1000 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/yaruo.gif') }}" alt="Submission">
+					</div>
+					<div class='submission flex-column align-items-center justify-content-center d-flex'>
+							<div class='center-text alone-text'>WHORL</div>
+							<div class='center-text'><b>100 Created</b></div>
+							<br>
+							<img class='submission-pic' src="{{ url_for('static', filename='submitted/whorl.jpg') }}" alt="Submission">
+					</div>
+			</div>
+		</div>
 
 
 
